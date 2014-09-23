@@ -25,11 +25,21 @@ sigma = zeros(1, size(X, 2));
 %
 % Hint: You might find the 'mean' and 'std' functions useful.
 %       
+%tic
+m = size(X,1)
 
+mu = mean(X)
+sigma = std(X)
 
+X_norm = (X - repmat(mu, m,1)) ./ repmat(sigma, m, 1);
+%toc
 
-
-
+%tic
+%X_norm_zscore = zscore(X);
+%toc
+fprintf(' x = [%.3f %.3f]\n', [X_norm(1:10,:)]');
+%fprintf('\n');
+%fprintf(' x = [%.3f %.3f]\n', [X_norm_zscore(1:10,:)]');
 
 
 
