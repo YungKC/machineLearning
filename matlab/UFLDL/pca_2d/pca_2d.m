@@ -64,9 +64,13 @@ xTilda = xRot;
 xTilda(k+1:end, :) = 0;
 xHat = u * xTilda;
 
-
 % -------------------------------------------------------- 
 figure(3);
+scatter(xTilda(1, :), xTilda(2, :));
+title('xTilda trimmed');
+
+% -------------------------------------------------------- 
+figure(4);
 scatter(xHat(1, :), xHat(2, :));
 title('xHat');
 
@@ -81,12 +85,9 @@ xPCAWhite = xRot ./ repmat(sqrt(diag(S) + epsilon), 1, size(xRot, 2));
 
 
 % -------------------------------------------------------- 
-figure(4);
+figure(5);
 scatter(xPCAWhite(1, :), xPCAWhite(2, :));
 title('xPCAWhite');
-
-disp('Hit Enter');
-pause;
 
 %%================================================================
 %% Step 3: ZCA Whitening
@@ -97,7 +98,7 @@ xZCAWhite = u * xPCAWhite;
 
 
 % -------------------------------------------------------- 
-figure(5);
+figure(6);
 scatter(xZCAWhite(1, :), xZCAWhite(2, :));
 title('xZCAWhite');
 

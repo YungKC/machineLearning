@@ -104,7 +104,7 @@ display_network(x(:,randsel));
 %  Implement PCA with whitening and regularisation to produce the matrix
 %  xPCAWhite. 
 
-epsilon = 0.01;
+epsilon = 1e-2;
 xPCAWhite = xRot ./ repmat(sqrt(diag(S) + epsilon), 1, size(xRot, 2));
 
 % -------------------- YOUR CODE HERE -------------------- 
