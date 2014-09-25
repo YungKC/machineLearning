@@ -104,7 +104,7 @@ display_network(x(:,randsel));
 %  Implement PCA with whitening and regularisation to produce the matrix
 %  xPCAWhite. 
 
-epsilon = 0.1;
+epsilon = 0.01;
 xPCAWhite = xRot ./ repmat(sqrt(diag(S) + epsilon), 1, size(xRot, 2));
 
 % -------------------- YOUR CODE HERE -------------------- 
@@ -135,19 +135,19 @@ covar = xPCAWhite * xPCAWhite' / size(xPCAWhite, 2);
 figure('name','Visualisation of covariance matrix');
 imagesc(covar);
 
-% %%================================================================
-% %% Step 5: Implement ZCA whitening
-% %  Now implement ZCA whitening to produce the matrix xZCAWhite. 
-% %  Visualise the data and compare it to the raw data. You should observe
-% %  that whitening results in, among other things, enhanced edges.
+%%================================================================
+%% Step 5: Implement ZCA whitening
+%  Now implement ZCA whitening to produce the matrix xZCAWhite. 
+%  Visualise the data and compare it to the raw data. You should observe
+%  that whitening results in, among other things, enhanced edges.
 
-% xZCAWhite = zeros(size(x));
+xZCAWhite = U * xPCAWhite;
 
-% % -------------------- YOUR CODE HERE -------------------- 
+% -------------------- YOUR CODE HERE -------------------- 
 
-% % Visualise the data, and compare it to the raw data.
-% % You should observe that the whitened images have enhanced edges.
-% figure('name','ZCA whitened images');
-% display_network(xZCAWhite(:,randsel));
-% figure('name','Raw images');
-% display_network(x(:,randsel));
+% Visualise the data, and compare it to the raw data.
+% You should observe that the whitened images have enhanced edges.
+figure('name',strcat('ZCA whitened images, epsilon=', num2str(epsilon)));
+display_network(xZCAWhite(:,randsel));
+figure('name','Raw images');
+display_network(x(:,randsel));
