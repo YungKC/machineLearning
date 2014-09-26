@@ -40,7 +40,7 @@ warning all off
                                    numClasses, inputSize, lambda, ...
                                    inputData, labels), ...                                   
                               theta, options);
-warning all on
+% warning all on
 % Fold softmaxOptTheta into a nicer format
 softmaxModel.optTheta = reshape(softmaxOptTheta, numClasses, inputSize);
 softmaxModel.inputSize = inputSize;
