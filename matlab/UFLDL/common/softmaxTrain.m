@@ -14,9 +14,9 @@ function [softmaxModel] = softmaxTrain(inputSize, numClasses, lambda, inputData,
 % options (optional): options
 %   options.maxIter: number of iterations to train for
 
-if ~exist('options', 'var')
-    options = struct;
-end
+% if ~exist('options', 'var')
+%     options = struct;
+% end
 
 if ~isfield(options, 'maxIter')
     options.MaxIter = 400;
@@ -35,11 +35,12 @@ options.Method = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
 options.Display = 'iter';
 options.GradObj = 'on';
 
+warning all off
 [softmaxOptTheta, cost] = fminlbfgs( @(p) softmaxCost(p, ...
                                    numClasses, inputSize, lambda, ...
                                    inputData, labels), ...                                   
                               theta, options);
-
+warning all on
 % Fold softmaxOptTheta into a nicer format
 softmaxModel.optTheta = reshape(softmaxOptTheta, numClasses, inputSize);
 softmaxModel.inputSize = inputSize;
