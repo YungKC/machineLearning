@@ -1,3 +1,5 @@
+addpath ../common/
+
 %% CS294A/CS294W Softmax Exercise 
 
 %  Instructions
@@ -45,7 +47,7 @@ inputData = images;
 % in order to speed up gradient checking. 
 % Here, we create synthetic dataset using random data for testing
 
-DEBUG = true; % Set DEBUG to true when debugging.
+DEBUG = false; % Set DEBUG to true when debugging.
 if DEBUG
     inputSize = 8;
     inputData = randn(8, 100);
@@ -100,32 +102,32 @@ softmaxModel = softmaxTrain(inputSize, numClasses, lambda, ...
 % MNIST data set, in practice, training for more iterations is usually
 % beneficial.
 
-%%======================================================================
-%% STEP 5: Testing
-%
-%  You should now test your model against the test images.
-%  To do this, you will first need to write softmaxPredict
-%  (in softmaxPredict.m), which should return predictions
-%  given a softmax model and the input data.
+% %%======================================================================
+% %% STEP 5: Testing
+% %
+% %  You should now test your model against the test images.
+% %  To do this, you will first need to write softmaxPredict
+% %  (in softmaxPredict.m), which should return predictions
+% %  given a softmax model and the input data.
 
-images = loadMNISTImages('../mnist/t10k-images-idx3-ubyte');
-labels = loadMNISTLabels('../mnist/t10k-labels-idx1-ubyte');
-labels(labels==0) = 10; % Remap 0 to 10
+% images = loadMNISTImages('../mnist/t10k-images-idx3-ubyte');
+% labels = loadMNISTLabels('../mnist/t10k-labels-idx1-ubyte');
+% labels(labels==0) = 10; % Remap 0 to 10
 
-inputData = images;
+% inputData = images;
 
-% You will have to implement softmaxPredict in softmaxPredict.m
-[pred] = softmaxPredict(softmaxModel, inputData);
+% % You will have to implement softmaxPredict in softmaxPredict.m
+% [pred] = softmaxPredict(softmaxModel, inputData);
 
-acc = mean(labels(:) == pred(:));
-fprintf('Accuracy: %0.3f%%\n', acc * 100);
+% acc = mean(labels(:) == pred(:));
+% fprintf('Accuracy: %0.3f%%\n', acc * 100);
 
-% Accuracy is the proportion of correctly classified images
-% After 100 iterations, the results for our implementation were:
-%
-% Accuracy: 92.200%
-%
-% If your values are too low (accuracy less than 0.91), you should check 
-% your code for errors, and make sure you are training on the 
-% entire data set of 60000 28x28 training images 
-% (unless you modified the loading code, this should be the case)
+% % Accuracy is the proportion of correctly classified images
+% % After 100 iterations, the results for our implementation were:
+% %
+% % Accuracy: 92.200%
+% %
+% % If your values are too low (accuracy less than 0.91), you should check 
+% % your code for errors, and make sure you are training on the 
+% % entire data set of 60000 28x28 training images 
+% % (unless you modified the loading code, this should be the case)

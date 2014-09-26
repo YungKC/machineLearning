@@ -14,6 +14,7 @@ theta = reshape(theta, numClasses, inputSize);
 numCases = size(data, 2);
 
 groundTruth = full(sparse(labels, 1:numCases, 1));
+
 cost = 0;
 
 thetagrad = zeros(numClasses, inputSize);
@@ -23,31 +24,27 @@ thetagrad = zeros(numClasses, inputSize);
 %                You need to compute thetagrad and cost.
 %                The groundTruth matrix might come in handy.
 
+% size(groundTruth) % = k x m
+% size(theta)	% = k x n
+% size(data)  	% = n x m
 
-% size(groundTruth) % 10 100
-% size(theta)       % 10 8
-% size(labels)      % 100 1
-% size(data)        % 8 10
-% size (thetagrad)  % 10 8  
-% h                 % 10 10
+% ----------------------
 
-y = groundTruth;
-m = numCases;
 
-% note that if we subtract off after taking the exponent, as in the
-% text, we get NaN
-td = theta * data;
-td = bsxfun(@minus, td, max(td));
-temp = exp(td);
+tx = theta * data;
+tx1 = tx .- max(tx);		%offset input
+etx = exp(tx1);
 
-denominator = sum(temp);
-p = bsxfun(@rdivide, temp, denominator);
-cost = (-1/m) * sum(sum(y .* log(p))) + (lambda / 2) * sum(sum(theta .^2));
+denominator = sum(etx);
 
-thetagrad = (-1/m) * (y - p) * data' + lambda * theta;
+p = etx ./ denominator;
+%size(p)  % k x m
+
+cost = -1/numCases * sum(sum(groundTruth .* log(p))) + lambda/2*sum(sum(theta.^2));
+
+thetagrad = -1/numCases * (groundTruth - p) * data' + lambda * theta;
 
 % ------------------------------------------------------------------
 % Unroll the gradient matrices into a vector for minFunc
 grad = [thetagrad(:)];
 end
-
