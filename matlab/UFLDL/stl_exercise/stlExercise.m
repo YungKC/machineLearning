@@ -100,6 +100,7 @@ theta = initializeParameters(hiddenSize, inputSize);
 %         unlabeledSet   29404x1                     117616  double
 
 patches = unlabeledData(:,1:10000);
+warning('off');
 tic();
 [cost, grad] = sparseAutoencoderCost(theta, inputSize, hiddenSize, lambda, ...
                                      sparsityParam, beta, patches);
@@ -117,15 +118,14 @@ options.MaxIter = 400;	  % Maximum number of iterations of L-BFGS to run
 options.Display = 'iter';
 options.GradObj = 'on';
 
-warning off all
-
+tic();
 [opttheta, cost] = fminlbfgs( @(p) sparseAutoencoderCost(p, ...
                                    inputSize, hiddenSize, ...
                                    lambda, sparsityParam, ...
                                    beta, patches), ...
                               		theta, options);
 
-
+toc()
 
 
 
