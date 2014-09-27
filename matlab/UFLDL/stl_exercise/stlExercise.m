@@ -1,4 +1,5 @@
 addpath ../common/
+addpath ../common/fminlbfgs/
 
 %% CS294A/CS294W Self-taught Learning Exercise
 
@@ -99,10 +100,11 @@ theta = initializeParameters(hiddenSize, inputSize);
 %         unlabeledSet   29404x1                     117616  double
 
 patches = unlabeledData(:,1:10000);
+tic();
 [cost, grad] = sparseAutoencoderCost(theta, inputSize, hiddenSize, lambda, ...
                                      sparsityParam, beta, patches);
 
-
+toc()
 theta = initializeParameters(hiddenSize, inputSize);
 
 %  Use minFunc to minimize the function
