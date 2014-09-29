@@ -97,6 +97,10 @@ lambda = 1e-4;
 
 numClasses = numel(unique(trainLabels));
 
+options.MaxIter = 400;
+options.Display = 'iter';
+options.GradObj = 'on';
+
 softmaxModel = softmaxTrain(hiddenSize, numClasses, lambda, ...
                             trainFeatures, trainLabels, options);
 
