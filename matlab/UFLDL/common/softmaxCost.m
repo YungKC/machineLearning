@@ -24,20 +24,23 @@ thetagrad = zeros(numClasses, inputSize);
 %                You need to compute thetagrad and cost.
 %                The groundTruth matrix might come in handy.
 
-% size(groundTruth) % = k x m
-% size(theta)	% = k x n
-% size(data)  	% = n x m
+%size(groundTruth) % = k x m
+%size(theta)	% = k x n
+%size(data)  	% = n x m
 
 % ----------------------
 
 
 tx = theta * data;
-tx1 = tx .- max(tx);		%offset input
+%tx1 = tx .- max(tx);		%offset input
+tx1 = bsxfun(@minus, tx, max(tx));
 etx = exp(tx1);
 
 denominator = sum(etx);
 
-p = etx ./ denominator;
+%p = etx ./ denominator;
+p = bsxfun(@rdivide, etx, denominator);
+
 %size(p)  % k x m
 
 cost = -1/numCases * sum(sum(groundTruth .* log(p))) + lambda/2*sum(sum(theta.^2));
