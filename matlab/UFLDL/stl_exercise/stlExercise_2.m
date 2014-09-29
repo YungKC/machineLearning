@@ -126,6 +126,7 @@ save('softmaxModel.mat', 'softmaxModel');
 
 [pred] = softmaxPredict(softmaxModel, testFeatures);
 
+[predTrain] = softmaxPredict(softmaxModel, trainFeatures);
 
 
 
@@ -140,7 +141,8 @@ save('softmaxModel.mat', 'softmaxModel');
 %% -----------------------------------------------------
 
 % Classification Score
-fprintf('Test Accuracy: %f%%\n', 100*mean(pred(:) == testLabels(:)));
+fprintf('Test Accuracy for Test Data   : %f%%\n', 100*mean(pred(:) == testLabels(:)));
+fprintf('Test Accuracy for Trained Data: %f%%\n', 100*mean(predTrain(:) == trainLabels(:)));
 
 % (note that we shift the labels by 1, so that digit 0 now corresponds to
 %  label 1)
