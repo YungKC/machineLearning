@@ -47,7 +47,8 @@ numTrain = round(numel(labeledSet)/2);
 trainSet = labeledSet(1:numTrain);
 testSet  = labeledSet(numTrain+1:end);
 
-unlabeledData = mnistData(:, unlabeledSet);
+%unlabeledData = mnistData(:, unlabeledSet);
+unlabeledData = mnistData(:, :);    % all data set as unsupervised input
 
 trainData   = mnistData(:, trainSet);
 trainLabels = mnistLabels(trainSet)' + 1; % Shift Labels to the Range 1-5
