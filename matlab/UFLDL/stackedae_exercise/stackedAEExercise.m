@@ -59,31 +59,28 @@ sae1Theta = initializeParameters(hiddenSizeL1, inputSize);
 %                You should store the optimal parameters in sae1OptTheta
 
 
-% %  Use minFunc to minimize the function
-% options.HessUpate = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
-%                           % function. Generally, for minFunc to work, you
-%                           % need a function pointer with two outputs: the
-%                           % function value and the gradient. In our problem,
-%                           % sparseAutoencoderCost.m satisfies this.
-% options.MaxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
-% options.Display = 'iter';
-% options.GradObj = 'on';
+%  Use minFunc to minimize the function
+options.HessUpate = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
+                          % function. Generally, for minFunc to work, you
+                          % need a function pointer with two outputs: the
+                          % function value and the gradient. In our problem,
+                          % sparseAutoencoderCost.m satisfies this.
+options.MaxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
+options.Display = 'iter';
+options.GradObj = 'on';
 
-% tic();
-% [sae1OptTheta, cost1] = fminlbfgs( @(p) sparseAutoencoderCost(p, ...
-%                                    inputSize, hiddenSizeL1, ...
-%                                    lambda, sparsityParam, ...
-%                                    beta, trainData), ...
-%                               		sae1Theta, options);
+[sae1OptTheta, cost1] = fminlbfgs( @(p) sparseAutoencoderCost(p, ...
+                                   inputSize, hiddenSizeL1, ...
+                                   lambda, sparsityParam, ...
+                                   beta, trainData), ...
+                              		sae1Theta, options);
+save 'result/sae1OptTheta.mat' sae1OptTheta
 
-% fminlbfgs_time = toc()
-
-load('../stl_exercise/optthetaAll.mat');
-sae1OptTheta = opttheta;
+%load('result/optthetaAll.mat');
 
 % to fit into 32 bit memory
-trainData = trainData(:,1:10000);
-trainLabels = trainLabels(1:10000);
+% trainData = trainData(:,1:10000);
+% trainLabels = trainLabels(1:10000);
 
 % -------------------------------------------------------------------------
 
@@ -119,16 +116,14 @@ options.MaxIter = 400;	  % Maximum number of iterations of L-BFGS to run
 options.Display = 'iter';
 options.GradObj = 'on';
 
-tic();
 [sae2OptTheta, cost2] = fminlbfgs( @(p) sparseAutoencoderCost(p, ...
                                    hiddenSizeL1, hiddenSizeL2, ...
                                    lambda, sparsityParam, ...
                                    beta, sae1Features), ...
                               		sae2Theta, options);
 
-fminlbfgs_time = toc()
 
-save('sae2OptTheta.mat','sae2OptTheta');
+save 'result/sae2OptTheta.mat', sae2OptTheta;
 
 % -------------------------------------------------------------------------
 
@@ -157,14 +152,12 @@ saeSoftmaxTheta = 0.005 * randn(hiddenSizeL2 * numClasses, 1);
 %        set saeSoftmaxOptTheta = softmaxModel.optTheta(:);
 
 
-options.MaxIter = 400;
-options.Display = 'iter';
-options.GradObj = 'on';
+options.MaxIter = 100;
 
 softmaxModel = softmaxTrain(hiddenSizeL2, numClasses, lambda, ...
                             sae2Features, trainLabels, options);
 
-save('softmaxModel.mat', 'softmaxModel');
+save 'result/softmaxModel.mat', softmaxModel;
 
 saeSoftmaxOptTheta = softmaxModel.optTheta(:);
 
@@ -199,21 +192,22 @@ stackedAETheta = [ saeSoftmaxOptTheta ; stackparams ];
 %
 %
 
+options.HessUpate = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
+                          % function. Generally, for minFunc to work, you
+                          % need a function pointer with two outputs: the
+                          % function value and the gradient. In our problem,
+                          % sparseAutoencoderCost.m satisfies this.
+options.MaxIter = 400;    % Maximum number of iterations of L-BFGS to run 
+options.Display = 'iter';
+options.GradObj = 'on';
 
+[stackedAEOptTheta, cost2] = fminlbfgs( @(p) stackedAECost(p, ...
+                                   inputSize, hiddenSizeL2, ...
+                                   numClasses, netconfig, ...
+                                   lambda, trainData, trainLabels), ...
+                                  stackedAETheta, options);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+save 'result/stackedAEOptTheta.mat' stackedAEOptTheta;
 
 % -------------------------------------------------------------------------
 
