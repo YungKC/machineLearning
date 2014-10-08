@@ -117,17 +117,24 @@ theta = initializeParameters(hiddenSize, visibleSize);
 
 
 %% limit patch size for memory issues
-% patches = patches(:,1:10000);
+patches = patches(:,1:10000);
 
 options = struct;
-options.Method = 'lbfgs'; 
-options.maxIter = 400;
-options.display = 'on';
 
-%test
-%patches = patches(:,1:100);
+% options.Method = 'lbfgs'; 
+% options.maxIter = 400;
+% options.display = 'on';
 
-[optTheta, cost] = minFunc( @(p) sparseAutoencoderLinearCost(p, ...
+options.HessUpate = 'lbfgs'; % Here, we use L-BFGS to optimize our cost
+                          % function. Generally, for minFunc to work, you
+                          % need a function pointer with two outputs: the
+                          % function value and the gradient. In our problem,
+                          % sparseAutoencoderCost.m satisfies this.
+options.MaxIter = 400;	  % Maximum number of iterations of L-BFGS to run 
+options.Display = 'iter';
+options.GradObj = 'on';
+
+[optTheta, cost] = fminlbfgs( @(p) sparseAutoencoderLinearCost(p, ...
                                    visibleSize, hiddenSize, ...
                                    lambda, sparsityParam, ...
                                    beta, patches), ...
