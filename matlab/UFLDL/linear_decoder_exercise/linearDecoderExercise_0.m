@@ -1,6 +1,4 @@
-addpath '../common/';
-addpath '../common/minFunc';
-addpath '../common/fminlbfgs';
+addpath ../common/
 
 %% CS294A/CS294W Linear Decoder Exercise
 
@@ -113,34 +111,34 @@ displayColorNetwork(patches(:, 1:100));
 %  You will now use your sparse autoencoder (with linear decoder) to learn
 %  features on the preprocessed patches. This should take around 45 minutes.
 
-theta = initializeParameters(hiddenSize, visibleSize);
+% theta = initializeParameters(hiddenSize, visibleSize);
 
+% % Use minFunc to minimize the function
+% addpath '../common';
+% addpath '../common/fminlbfgs';
 
-%% limit patch size for memory issues
-% patches = patches(:,1:10000);
+% %% limit patch size for memory issues
+% % patches = patches(:,1:10000);
 
-options = struct;
-options.Method = 'lbfgs'; 
-options.maxIter = 400;
-options.display = 'on';
+% options = struct;
+% options.Method = 'lbfgs'; 
+% options.maxIter = 400;
+% options.display = 'on';
 
-%test
-%patches = patches(:,1:100);
+% [optTheta, cost] = fminlbfgs( @(p) sparseAutoencoderLinearCost(p, ...
+%                                    visibleSize, hiddenSize, ...
+%                                    lambda, sparsityParam, ...
+%                                    beta, patches), ...
+%                               theta, options);
 
-[optTheta, cost] = minFunc( @(p) sparseAutoencoderLinearCost(p, ...
-                                   visibleSize, hiddenSize, ...
-                                   lambda, sparsityParam, ...
-                                   beta, patches), ...
-                              theta, options);
+% % Save the learned features and the preprocessing matrices for use in 
+% % the later exercise on convolution and pooling
+% fprintf('Saving learned features and preprocessing matrices...\n');                          
+% save('../stl/STL10Features.mat', 'optTheta', 'ZCAWhite', 'meanPatch');
+% fprintf('Saved\n');
 
-% Save the learned features and the preprocessing matrices for use in 
-% the later exercise on convolution and pooling
-fprintf('Saving learned features and preprocessing matrices...\n');                          
-save('../stl/STL10Features.mat', 'optTheta', 'ZCAWhite', 'meanPatch');
-fprintf('Saved\n');
+% %% STEP 2d: Visualize learned features
 
-%% STEP 2d: Visualize learned features
-
-W = reshape(optTheta(1:visibleSize * hiddenSize), hiddenSize, visibleSize);
-b = optTheta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
-displayColorNetwork( (W*ZCAWhite)');
+% W = reshape(optTheta(1:visibleSize * hiddenSize), hiddenSize, visibleSize);
+% b = optTheta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
+% displayColorNetwork( (W*ZCAWhite)');

@@ -21,7 +21,7 @@ numgrad = zeros(size(theta));
 % size(theta)   2 1 | 3289 1
 % size(numgrad) 2 1 | 3289 1
 eps = 1e-4;
-n = size(numgrad);
+n = size(numgrad, 1);
 I = eye(n, n);
 for i = 1:size(numgrad)
     eps_vec = I(:,i) * eps;
