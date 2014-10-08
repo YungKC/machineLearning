@@ -40,9 +40,10 @@ convolvedFeatures = zeros(numFeatures, numImages, imageDim - patchDim + 1, image
 % that you need to take into account the whitening and mean subtraction
 % steps
 
-
-
-
+% newImage = (image - meanImage)*W + b
+newW = W * ZCAWhite;
+% Apply ZCA whitening
+newB = b - newW * meanPatch;
 
 
 % --------------------------------------------------------
@@ -53,11 +54,16 @@ for imageNum = 1:numImages
 
     % convolution of image with feature matrix for each channel
     convolvedImage = zeros(imageDim - patchDim + 1, imageDim - patchDim + 1);
-    for channel = 1:3
+    for channel = 1:imageChannels
 
       % Obtain the feature (patchDim x patchDim) needed during the convolution
       % ---- YOUR CODE HERE ----
-      feature = zeros(8,8); % You should replace this
+      feature = zeros(patchDim, patchDim); % You should replace here
+
+      first = 1+(channel-1) * patchDim * patchDim;
+      last = first + patchDim * patchDim - 1;
+
+      feature = reshape(newW(featureNum, first:last), patchDim, patchDim);
       
       
       
@@ -74,7 +80,7 @@ for imageNum = 1:numImages
       % be sure to do a 'valid' convolution
       % ---- YOUR CODE HERE ----
 
-      
+      convolvedImage = convolvedImage + conv2(im, feature, 'valid');
       
       
       % ------------------------
@@ -85,7 +91,7 @@ for imageNum = 1:numImages
     % Then, apply the sigmoid function to get the hidden activation
     % ---- YOUR CODE HERE ----
 
-    
+    convolvedImage = sigmoid(convolvedImage + newB(featureNum));
     
     
     % ------------------------
@@ -98,3 +104,6 @@ end
 
 end
 
+function sigm = sigmoid(x)
+    sigm = 1 ./ (1 + exp(-x));
+end

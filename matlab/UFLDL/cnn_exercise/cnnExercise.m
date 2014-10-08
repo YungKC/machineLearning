@@ -1,3 +1,5 @@
+addpath '../linear_decoder_exercise';
+
 %% CS294A/CS294W Convolutional Neural Networks Exercise
 
 %  Instructions
@@ -42,6 +44,7 @@ optTheta =  zeros(2*hiddenSize*visibleSize+hiddenSize+visibleSize, 1);
 ZCAWhite =  zeros(visibleSize, visibleSize);
 meanPatch = zeros(visibleSize, 1);
 
+load('../stl/STL10Features.mat');
 
 % --------------------------------------------------------------------
 
@@ -64,7 +67,7 @@ displayColorNetwork( (W*ZCAWhite)');
 % Note that we have to preprocess the images in the exact same way 
 % we preprocessed the patches before we can obtain the feature activations.
 
-load stlTrainSubset.mat % loads numTrainImages, trainImages, trainLabels
+load('../stl/stlTrainSubset.mat'); % loads numTrainImages, trainImages, trainLabels
 
 %% Use only the first 8 images for testing
 convImages = trainImages(:, :, :, 1:8); 
@@ -147,8 +150,8 @@ end
 stepSize = 50;
 assert(mod(hiddenSize, stepSize) == 0, 'stepSize should divide hiddenSize');
 
-load stlTrainSubset.mat % loads numTrainImages, trainImages, trainLabels
-load stlTestSubset.mat  % loads numTestImages,  testImages,  testLabels
+load('../stl/stlTrainSubset.mat'); % loads numTrainImages, trainImages, trainLabels
+load('../stl/stlTestSubset.mat');  % loads numTestImages,  testImages,  testLabels
 
 pooledFeaturesTrain = zeros(hiddenSize, numTrainImages, ...
     floor((imageDim - patchDim + 1) / poolDim), ...
@@ -189,7 +192,7 @@ end
 
 
 % You might want to save the pooled features since convolution and pooling takes a long time
-save('cnnPooledFeatures.mat', 'pooledFeaturesTrain', 'pooledFeaturesTest');
+save('result/cnnPooledFeatures.mat', 'result/pooledFeaturesTrain', 'result/pooledFeaturesTest');
 toc();
 
 %%======================================================================
