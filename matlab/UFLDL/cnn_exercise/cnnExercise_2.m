@@ -14,19 +14,19 @@
 % %% STEP 0: Initialization
 % %  Here we initialize some parameters used for the exercise.
 
-% imageDim = 64;         % image dimension
-% imageChannels = 3;     % number of channels (rgb, so 3)
+imageDim = 64;         % image dimension
+imageChannels = 3;     % number of channels (rgb, so 3)
 
-% patchDim = 8;          % patch dimension
-% numPatches = 50000;    % number of patches
+patchDim = 8;          % patch dimension
+numPatches = 50000;    % number of patches
 
-% visibleSize = patchDim * patchDim * imageChannels;  % number of input units 
-% outputSize = visibleSize;   % number of output units
-% hiddenSize = 400;           % number of hidden units 
+visibleSize = patchDim * patchDim * imageChannels;  % number of input units 
+outputSize = visibleSize;   % number of output units
+hiddenSize = 400;           % number of hidden units 
 
-% epsilon = 0.1;	       % epsilon for ZCA whitening
+epsilon = 0.1;	       % epsilon for ZCA whitening
 
-% poolDim = 19;          % dimension of pooling region
+poolDim = 19;          % dimension of pooling region
 
 % %%======================================================================
 % %% STEP 1: Train a sparse autoencoder (with a linear decoder) to learn 
@@ -44,15 +44,15 @@
 % ZCAWhite =  zeros(visibleSize, visibleSize);
 % meanPatch = zeros(visibleSize, 1);
 
-% load('../stl/STL10Features.mat');
+load('../stl/STL10Features.mat');
 
 % % --------------------------------------------------------------------
 
 % % Display and check to see that the features look good
-% W = reshape(optTheta(1:visibleSize * hiddenSize), hiddenSize, visibleSize);
-% b = optTheta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
-
-% displayColorNetwork( (W*ZCAWhite)');
+W = reshape(optTheta(1:visibleSize * hiddenSize), hiddenSize, visibleSize);
+b = optTheta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
+figure;
+displayColorNetwork( (W*ZCAWhite)');
 
 % %%======================================================================
 % %% STEP 2: Implement and test convolution and pooling
@@ -67,13 +67,13 @@
 % % Note that we have to preprocess the images in the exact same way 
 % % we preprocessed the patches before we can obtain the feature activations.
 
-% load('../stl/stlTrainSubset.mat'); % loads numTrainImages, trainImages, trainLabels
+load('../stl/stlTrainSubset.mat'); % loads numTrainImages, trainImages, trainLabels
 
-% %% Use only the first 8 images for testing
-% convImages = trainImages(:, :, :, 1:8); 
+%% Use only the first 8 images for testing
+convImages = trainImages(:, :, :, 1:8); 
 
-% % NOTE: Implement cnnConvolve in cnnConvolve.m first!
-% convolvedFeatures = cnnConvolve(patchDim, hiddenSize, convImages, W, b, ZCAWhite, meanPatch);
+% NOTE: Implement cnnConvolve in cnnConvolve.m first!
+convolvedFeatures = cnnConvolve(patchDim, hiddenSize, convImages, W, b, ZCAWhite, meanPatch);
 
 % %% STEP 2b: Checking your convolution
 % %  To ensure that you have convolved the features correctly, we have
@@ -150,8 +150,8 @@
 % stepSize = 50;
 % assert(mod(hiddenSize, stepSize) == 0, 'stepSize should divide hiddenSize');
 
-% load('../stl/stlTrainSubset.mat'); % loads numTrainImages, trainImages, trainLabels
-% load('../stl/stlTestSubset.mat');  % loads numTestImages,  testImages,  testLabels
+load('../stl/stlTrainSubset.mat'); % loads numTrainImages, trainImages, trainLabels
+load('../stl/stlTestSubset.mat');  % loads numTestImages,  testImages,  testLabels
 
 % pooledFeaturesTrain = zeros(hiddenSize, numTrainImages, ...
 %     floor((imageDim - patchDim + 1) / poolDim), ...
@@ -195,6 +195,9 @@
 % save('result/cnnPooledFeatures.mat', 'pooledFeaturesTrain', 'pooledFeaturesTest');
 % toc();
 
+load('result/cnnPooledFeatures.mat');
+addpath('../common');
+
 %%======================================================================
 %% STEP 4: Use pooled features for classification
 %  Now, you will use your pooled features to train a softmax classifier,
@@ -231,9 +234,16 @@ softmaxY = testLabels;
 acc = (pred(:) == softmaxY(:));
 acc = sum(acc) / size(acc, 1);
 fprintf('Accuracy: %2.3f%%\n', acc * 100);
+% You should expect to get an accuracy of around 80% on the test images.
 
 % to see images
-imageToShow = 8;
-imagesc(testImages(:,:,:,imageToShow),[0,1]);
+imageToShow = 4;
+figure;
+imagesc(trainImages(:,:,:,imageToShow),[0,1]);
 
-% You should expect to get an accuracy of around 80% on the test images.
+% display the convolvedFeatures for 2 interesting features
+figure; featureNum = 6;  imagesc(squeeze(convolvedFeatures(featureNum, imageToShow, :, :)),[0,1]);
+figure; featureNum = 20; imagesc(squeeze(convolvedFeatures(featureNum, imageToShow, :, :)),[0,1]);
+
+% display the pooledFeature data
+squeeze(pooledFeaturesTrain(featureNum, imageToShow, :, :))
