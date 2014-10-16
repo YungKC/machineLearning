@@ -1,5 +1,7 @@
 links
 
+http://deeplearning.net/demos/
+
 http://www.imbe.med.uni-erlangen.de/ma/M.Schmid/Tutorial/01_Introduction.pdf
 https://www.youtube.com/watch?v=UHBmv7qCey4
 http://www.cs.toronto.edu/~hinton/MatlabForSciencePaper.html
