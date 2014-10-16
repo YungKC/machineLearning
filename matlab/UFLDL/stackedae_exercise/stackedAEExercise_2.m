@@ -125,7 +125,17 @@ sae2Theta = initializeParameters(hiddenSizeL2, hiddenSizeL1);
 
 % save ('result/sae2OptTheta.mat', 'sae2OptTheta');
 load('result/sae2OptTheta.mat');
+
+%visualize
+
 % -------------------------------------------------------------------------
+W1=reshape(sae1OptTheta(1:hiddenSizeL1*inputSize), hiddenSizeL1, inputSize);
+W2=reshape(sae2OptTheta(1:hiddenSizeL2*hiddenSizeL1), hiddenSizeL2, hiddenSizeL1);
+B1=sae1OptTheta(2*hiddenSizeL1*inputSize+1:2*hiddenSizeL1*inputSize+hiddenSizeL1);
+figure;
+display_network(W1');
+figure;
+display_network(W1'*W2);
 
 
 %%======================================================================
