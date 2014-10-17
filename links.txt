@@ -2,6 +2,9 @@ links
 
 http://deeplearning.net/demos/
 
+# great starting point for convolutional nn for 2d image recognition
+https://code.google.com/p/cuda-convnet2/
+
 http://www.imbe.med.uni-erlangen.de/ma/M.Schmid/Tutorial/01_Introduction.pdf
 https://www.youtube.com/watch?v=UHBmv7qCey4
 http://www.cs.toronto.edu/~hinton/MatlabForSciencePaper.html
