@@ -29,7 +29,7 @@ a1 = [ones(m, 1) a1];
 
 [ignored,p] = max(sigmoid(a1 * Theta2'), [], 2);
 
-p
+%p
 
 
 
