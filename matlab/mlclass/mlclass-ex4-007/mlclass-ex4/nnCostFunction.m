@@ -64,10 +64,23 @@ Theta2_grad = zeros(size(Theta2));
 
 
 
+% feed forward
+size(X)
+size(Theta1)
+size(Theta2)
 
+X = [ones(m, 1) X];
+a2 = sigmoid(Theta1 * X');
 
+size(a2)
 
+a2 = [ones(1, size(a2,2));a2];
 
+size(a2)
+
+hypothesis = sigmoid(Theta2 * a2);
+
+size(hypothesis)
 
 
 
