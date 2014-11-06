@@ -1,5 +1,7 @@
 links
 
+http://scikit-learn.org/stable/index.html
+
 http://deeplearning.net/demos/
 
 # great starting point for convolutional nn for 2d image recognition
