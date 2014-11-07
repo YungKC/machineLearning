@@ -68,6 +68,7 @@ Theta2_grad = zeros(size(Theta2));
 size(X)
 size(Theta1)
 size(Theta2)
+size(y)
 
 X = [ones(m, 1) X];
 a2 = sigmoid(Theta1 * X');
@@ -81,6 +82,22 @@ size(a2)
 hypothesis = sigmoid(Theta2 * a2);
 
 size(hypothesis)
+
+
+%------------------
+
+tx1 = bsxfun(@minus, hypothesis, max(hypothesis));
+etx = exp(tx1);
+
+denominator = sum(etx);
+
+%p = etx ./ denominator;
+p = bsxfun(@rdivide, etx, denominator);
+
+size(p)  % k x m
+
+J = -1/m * sum(sum(y .* log(p)'));% + lambda/2*sum(sum(theta.^2));
+
 
 
 
