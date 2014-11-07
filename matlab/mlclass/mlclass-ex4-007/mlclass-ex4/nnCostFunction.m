@@ -66,24 +66,26 @@ Theta2_grad = zeros(size(Theta2));
 
 % feed forward
 %size(X)
-sizeTheta1 = size(Theta1)
-sizeTheta2 = size(Theta2)
+% sizeTheta1 = size(Theta1) % L2 x (L1+1)
+% sizeTheta2 = size(Theta2) % L3 x (L2+1)
 
 
 X = [ones(m, 1) X];
-sizeX = size(X)
+% sizeX = size(X)			% m x (L1+1)
 
-a2 = sigmoid(Theta1 * X');
+z2 = Theta1 * X';			% L2 x m
+a2 = sigmoid(z2);
 
 size(a2)
 
 a2 = [ones(1, size(a2,2));a2];
 
-sizeA2 = size(a2)
+% sizeA2 = size(a2)		% (L2+1) x m
 
-hypothesis = sigmoid(Theta2 * a2);
+z3 = Theta2 * a2;
+hypothesis = sigmoid(z3);
 
-sizeH = size(hypothesis)
+% sizeH = size(hypothesis) % L3 x m
 
 
 %------------------
@@ -91,7 +93,7 @@ sizeH = size(hypothesis)
 
 y = full(sparse(y, 1:m, 1));
 
-sizeY = size(y)
+% sizeY = size(y)			% L3 x m
 
 J = -1/m * sum(sum(y .* log(hypothesis) + (1-y) .* log(1-hypothesis)));
 
@@ -103,16 +105,13 @@ regCost = lambda/2/m * (sum(sum(Theta1NoBias .^ 2)) + sum(sum(Theta2NoBias .^ 2)
 J = J + regCost;
 
 
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------
+
+delta_3 = hypothesis - y;									% L3 x m
+delta_2 = (Theta2' *  delta_3) .* sigmoidGradient([ones(1, size(z2, 2)); z2]);		% L2 x m
+Theta2_grad = delta_3 * a2' ./ m;					% (L3 x m) * (m x L2) = L3 x (L2+1)
+
+
 
 % =========================================================================
 
