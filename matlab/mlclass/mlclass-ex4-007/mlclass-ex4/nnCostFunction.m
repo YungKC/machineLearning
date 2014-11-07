@@ -65,40 +65,42 @@ Theta2_grad = zeros(size(Theta2));
 
 
 % feed forward
-size(X)
-size(Theta1)
-size(Theta2)
-size(y)
+%size(X)
+sizeTheta1 = size(Theta1)
+sizeTheta2 = size(Theta2)
+
 
 X = [ones(m, 1) X];
+sizeX = size(X)
+
 a2 = sigmoid(Theta1 * X');
 
 size(a2)
 
 a2 = [ones(1, size(a2,2));a2];
 
-size(a2)
+sizeA2 = size(a2)
 
 hypothesis = sigmoid(Theta2 * a2);
 
-size(hypothesis)
+sizeH = size(hypothesis)
 
 
 %------------------
 
-tx1 = bsxfun(@minus, hypothesis, max(hypothesis));
-etx = exp(tx1);
 
-denominator = sum(etx);
+y = full(sparse(y, 1:m, 1));
 
-%p = etx ./ denominator;
-p = bsxfun(@rdivide, etx, denominator);
+sizeY = size(y)
 
-size(p)  % k x m
+J = -1/m * sum(sum(y .* log(hypothesis) + (1-y) .* log(1-hypothesis)));
 
-J = -1/m * sum(sum(y .* log(p)'));% + lambda/2*sum(sum(theta.^2));
+Theta1NoBias = Theta1(:,2:end);
+Theta2NoBias = Theta2(:,2:end);
 
+regCost = lambda/2/m * (sum(sum(Theta1NoBias .^ 2)) + sum(sum(Theta2NoBias .^ 2)));
 
+J = J + regCost;
 
 
 
