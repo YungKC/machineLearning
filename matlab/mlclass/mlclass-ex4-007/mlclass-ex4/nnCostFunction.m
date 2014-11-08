@@ -30,6 +30,7 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
+
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
@@ -70,10 +71,10 @@ Theta2_grad = zeros(size(Theta2));
 % sizeTheta2 = size(Theta2) % L3 x (L2+1)
 
 
-X = [ones(m, 1) X];
+a1= [ones(m, 1) X];
 % sizeX = size(X)			% m x (L1+1)
 
-z2 = Theta1 * X';			% L2 x m
+z2 = Theta1 * a1';			% L2 x m
 a2 = sigmoid(z2);
 
 % size(a2);
@@ -107,8 +108,12 @@ J = J + regCost;
 % -------------------------------------------------------------
 
 delta_3 = hypothesis - y;									% L3 x m
-delta_2 = (Theta2' *  delta_3) .* sigmoidGradient([ones(1, size(z2, 2)); z2]);		% L2 x m
+delta_2 = (Theta2' *  delta_3) .* sigmoidGradient([ones(1, size(z2, 2)); z2]);		% (L2+1) x m
 Theta2_grad = delta_3 * a2' ./ m;					% (L3 x m) * (m x L2) = L3 x (L2+1)
+
+% --------------------------------------------------------------
+
+Theta1_grad = delta_2(2:end, :) * a1 ./ m;			% L2 x (L1+1)
 
 % cd D:\study\machineLearning\matlab\mlclass\mlclass-ex4-007\mlclass-ex4
 
