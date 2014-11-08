@@ -76,7 +76,7 @@ X = [ones(m, 1) X];
 z2 = Theta1 * X';			% L2 x m
 a2 = sigmoid(z2);
 
-size(a2)
+% size(a2);
 
 a2 = [ones(1, size(a2,2));a2];
 
@@ -104,19 +104,17 @@ regCost = lambda/2/m * (sum(sum(Theta1NoBias .^ 2)) + sum(sum(Theta2NoBias .^ 2)
 
 J = J + regCost;
 
-
 % -------------------------------------------------------------
 
 delta_3 = hypothesis - y;									% L3 x m
 delta_2 = (Theta2' *  delta_3) .* sigmoidGradient([ones(1, size(z2, 2)); z2]);		% L2 x m
 Theta2_grad = delta_3 * a2' ./ m;					% (L3 x m) * (m x L2) = L3 x (L2+1)
 
-
+% cd D:\study\machineLearning\matlab\mlclass\mlclass-ex4-007\mlclass-ex4
 
 % =========================================================================
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
