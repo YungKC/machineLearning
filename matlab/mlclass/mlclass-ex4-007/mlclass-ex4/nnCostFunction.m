@@ -117,7 +117,25 @@ Theta1_grad = delta_2(2:end, :) * a1 ./ m;			% L2 x (L1+1)
 
 % cd D:\study\machineLearning\matlab\mlclass\mlclass-ex4-007\mlclass-ex4
 
+
+% --------------------------------------------------------------
+
+Theta2_reset0 = Theta2;
+Theta2_reset0(:, 1) = 0;
+
+Theta2_grad = Theta2_grad + lambda/m * Theta2_reset0;
+
+
+% --------------------------------------------------------------
+
+Theta1_reset0 = Theta1;
+Theta1_reset0(:, 1) = 0;
+
+Theta1_grad = Theta1_grad + lambda/m * Theta1_reset0;
+
+
 % =========================================================================
+
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
