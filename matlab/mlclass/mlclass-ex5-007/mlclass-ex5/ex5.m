@@ -82,6 +82,7 @@ pause;
 %
 
 %  Train linear regression with lambda = 0
+
 lambda = 0;
 [theta] = trainLinearReg([ones(m, 1) X], y, lambda);
 
@@ -97,14 +98,14 @@ fprintf('Program paused. Press enter to continue.\n');
 pause;
 
 
-return;
-
 %% =========== Part 5: Learning Curve for Linear Regression =============
 %  Next, you should implement the learningCurve function. 
 %
 %  Write Up Note: Since the model is underfitting the data, we expect to
 %                 see a graph with "high bias" -- slide 8 in ML-advice.pdf 
 %
+
+fprintf('Starting Learning Curve...\n');
 
 lambda = 0;
 [error_train, error_val] = ...
@@ -126,6 +127,7 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
 
 %% =========== Part 6: Feature Mapping for Polynomial Regression =============
 %  One solution to this is to use polynomial regression. You should now
@@ -196,6 +198,10 @@ end
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
+
+
+
+return;
 
 %% =========== Part 8: Validation for Selecting Lambda =============
 %  You will now implement validationCurve to test various values of 
