@@ -97,6 +97,8 @@ fprintf('Program paused. Press enter to continue.\n');
 pause;
 
 
+return;
+
 %% =========== Part 5: Learning Curve for Linear Regression =============
 %  Next, you should implement the learningCurve function. 
 %
