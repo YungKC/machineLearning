@@ -6,7 +6,10 @@ function kaiPlotData(xList, yList, data)
 % Note: This was slightly modified such that it expects y = 1 or y = 0
 
 % Find Indices of Positive and Negative Examples
+
+figure
 mesh(xList, yList, data)
+% contour(xList, yList, data)
 set(gca, 'xscale', 'log');
 set(gca, 'yscale', 'log');
 

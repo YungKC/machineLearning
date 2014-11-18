@@ -24,8 +24,14 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
-cList = [0.01 0.03 0.06 0.1 0.3 0.6 0.8 1 2 3 10]';
-sigmaList = [0.01 0.03 0.06 0.1 0.3 0.6 0.8 1 3 10]';
+cList = [0.01 0.03 0.06 0.1 0.3 0.6 0.8 1 2 3 10];
+sigmaList = [0.01 0.03 0.06 0.1 0.3 0.6 0.8 1 2 3 10];
+
+% cList = 1.5 .^[0:26] ./ 1000;
+% sigmaList = 1.5 .^[0:26] ./ 1000;
+
+cList = cList';
+sigmaList = sigmaList';
 
 dataset3ParamsResult = zeros(size(cList, 1), size(sigmaList, 1));
 maxCorrect = 0;
@@ -50,6 +56,7 @@ sigma
 maxCorrect
 dataset3ParamsResult
 
+save ('kaiPlotData.mat', 'cList', 'sigmaList', 'dataset3ParamsResult', 'maxCorrect');
 kaiPlotData(cList, sigmaList, dataset3ParamsResult);
 
 % % final answer
