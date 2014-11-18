@@ -8,6 +8,7 @@ function [C, sigma] = dataset3Params(X, y, Xval, yval)
 %
 
 % You need to return the following variables correctly.
+
 C = 1;
 sigma = 0.3;
 
@@ -23,11 +24,37 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+cList = [0.01 0.03 0.06 0.1 0.3 0.6 0.8 1 2 3 10]';
+sigmaList = [0.01 0.03 0.06 0.1 0.3 0.6 0.8 1 3 10]';
+
+dataset3ParamsResult = zeros(size(cList, 1), size(sigmaList, 1));
+maxCorrect = 0;
+for cIndex = 1 : size(cList, 1)
+	for sigmaIndex = 1 : size(sigmaList, 1)
+		model = svmTrain(X, y, cList(cIndex), @(x1, x2) gaussianKernel(x1, x2, sigmaList(sigmaIndex)));
+		predictions = svmPredict(model, Xval);
+		numCorrect = mean(double(predictions == yval));
+		dataset3ParamsResult(cIndex, sigmaIndex) = numCorrect;
+		if numCorrect > maxCorrect
+			maxCorrect = numCorrect
+			C = cList(cIndex)
+			sigma = sigmaList(sigmaIndex)
+
+		end
+	end
+end
 
 
+C
+sigma
+maxCorrect
+dataset3ParamsResult
 
+kaiPlotData(cList, sigmaList, dataset3ParamsResult);
 
-
+% % final answer
+% C = 1;
+% sigma = 0.1;
 
 % =========================================================================
 
