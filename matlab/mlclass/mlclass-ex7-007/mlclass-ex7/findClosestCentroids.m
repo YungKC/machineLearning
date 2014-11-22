@@ -20,11 +20,18 @@ idx = zeros(size(X,1), 1);
 %
 % Note: You can use a for-loop over the examples to compute this.
 %
-
-
-
-
-
+for i = 1:size(X,1)
+	distance = sum((centroids(1) - X(i)) .^ 2);
+	bestK = 1;
+	for kIndex = 2:K
+		newDistance = sum((centroids(kIndex) - X(i)) .^ 2);
+		if (newDistance < distance)
+			newDistance = distance;
+			bestK = kIndex;
+		end
+	end
+	idx(i) = bestK;
+end
 
 
 % =============================================================
