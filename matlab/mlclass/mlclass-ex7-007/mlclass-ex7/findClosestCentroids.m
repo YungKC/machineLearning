@@ -21,12 +21,16 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 for i = 1:size(X,1)
-	distance = sum((centroids(1) - X(i)) .^ 2);
+    pt1 = centroids(1,:);
+    pt2 = X(i, :);
+	distance = sum((pt1 - pt2) .^ 2);
 	bestK = 1;
 	for kIndex = 2:K
-		newDistance = sum((centroids(kIndex) - X(i)) .^ 2);
-		if (newDistance < distance)
-			newDistance = distance;
+        pt1 = centroids(kIndex, :);
+        pt2 = X(i, :);
+		newDistance = sum((pt1 - pt2) .^ 2);
+		if newDistance < distance
+			distance = newDistance;
 			bestK = kIndex;
 		end
 	end

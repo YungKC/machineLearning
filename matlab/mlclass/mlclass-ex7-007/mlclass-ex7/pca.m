@@ -20,10 +20,10 @@ S = zeros(n);
 %       number of examples).
 %
 
+sigma = X' * X ./ m;
+size(sigma)
 
-
-
-
+[U, S, ignored] = svd(sigma);
 
 
 % =========================================================================

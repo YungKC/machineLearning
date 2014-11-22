@@ -26,12 +26,11 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 
-
-
-
-
-
-
+for i = 1: K
+	selector = idx==i;
+	xSelected = X .* repmat(selector, 1, n);
+	centroids(i,:) = sum(xSelected, 1)/sum(selector);
+end
 
 % =============================================================
 
