@@ -26,7 +26,7 @@ mu = 1/m * sum(X,1)';
 
 muSize = size(mu);
 
-sigma2 = 1/m * sum((X' - mu).^2,2);
+sigma2 = 1/m * sum((X' - repmat(mu, 1, m)).^2,2);
 
 sigma2Size = size(sigma2);
 
