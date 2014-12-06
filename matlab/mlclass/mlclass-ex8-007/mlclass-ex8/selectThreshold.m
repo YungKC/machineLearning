@@ -30,9 +30,9 @@ for epsilon = min(pval):stepsize:max(pval)
     %       of 0's and 1's of the outlier predictions
 
     predictions = (pval < epsilon);
-    tp = sum(yval .* predictions)
-    fp = sum((yval == 0) .* predictions)
-    fn = sum((yval == 0) .* (predictions == 0))
+    tp = sum(yval .* predictions);
+    fp = sum((yval == 0) & predictions == 1);
+    fn = sum((yval == 1) & (predictions == 0));
     prec = tp/(tp + fp);
     rec = tp/(tp + fn);
 
