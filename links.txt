@@ -29,4 +29,5 @@ http://deeplearning.net/software/pylearn2/
 https://class.coursera.org/neuralnets-2012-001
 
 # Hacker's guide to Neural Networks
-http://karpathy.github.io/neuralnets/
+http://karpathy.github.io/neuralnets/"# javascript demo" 
+"http://cs.stanford.edu/people/karpathy/convnetjs/" 
