@@ -27,7 +27,7 @@ y = numpy.concatenate(ys)
 x = numpy.dstack((x[:, :1024], x[:, 1024:2048], x[:, 2048:]))
 
 imsave('cifar10_batch_'+'kai'+'.png', x[50000:50001,:])
-for i in range(51000):
+for i in range(100):
   tmp = x[i,:]
   tmp = numpy.reshape(tmp,(32,32,3))
   imsave('kai/cifar10_batch_'+`i`+'.png', tmp)
