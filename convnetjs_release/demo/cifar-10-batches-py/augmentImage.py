@@ -4,6 +4,10 @@ import numpy
 import random
 from scipy.misc import imsave, imread
 import subprocess
+import time
+import sys
+
+millis = int(round(time.time() * 1000))
 
 srcFiles = [os.getcwd()+'/../chiquita/ducky2.jpg', os.getcwd()+'/../chiquita/hawaii2.jpg', os.getcwd()+'/../chiquita/kid2.jpg', os.getcwd()+'/../chiquita/maid2.jpg', os.getcwd()+'/../chiquita/santa2.jpg', os.getcwd()+'/../chiquita/stash2.jpg']
 
@@ -29,17 +33,20 @@ for i in range(numImages):
 	subprocess.call(['convert',srcFile,'-rotate',`angle`,'-morphology','Convolve','Comet:0x'+`cometVal`+'+'+`cometRot`,'-seed',`seedVal`,'-attenuate',`attVal`,'+noise','gaussian','-gravity','Center','-crop','32x32+0+0','+repage',outFile])
 
 	imageData = imread(outFile)
-	print numpy.shape(imageData)
+#	print numpy.shape(imageData)
+	sys.stdout.write('.')
+	sys.stdout.flush()
 	xs.append(imageData)
 	ys.append([index])
 
 x = numpy.concatenate(xs)
 y = numpy.concatenate(ys)
 
-outLongFile = os.getcwd()+'/../chiquita/out/tmpL.png'
 
+outLongFile = os.getcwd()+'/../chiquita/out/tmp'+`millis`+'.png'
+labelFile = os.getcwd()+'/../chiquita/out/labels'+`millis`+'.js'
 imageDataReshaped = numpy.reshape(x,(numImages,32*32,3))
 print numpy.shape(imageDataReshaped)
 imsave(outLongFile, imageDataReshaped)
-	
+numpy.savetxt(labelFile, y, fmt='%d', newline=', ', header='var labels=[', footer='];', comments='')
 
