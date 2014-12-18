@@ -24,7 +24,7 @@
 
         var file = document.getElementById('fileToUpload').files[0];
         drawOnCanvas(file);   // see Example 6
-        displayAsImage(file); // see Example 7
+//        displayAsImage(file); // see Example 7
       }
       
       function uploadFile() {
@@ -78,9 +78,9 @@ function drawOnCanvas(file) {
         img = new Image();
 
     img.onload = function() {
-      c.width = img.width;
-      c.height = img.height;
-      ctx.drawImage(img, 0, 0);
+//      c.width = img.width;
+//     c.height = img.height;
+      ctx.drawImage(img, 0, 0, width=200, height=200);
     };
 
     img.src = dataURL;
@@ -111,6 +111,7 @@ function displayAsImage(file) {
         </label>
         <br />
         <input type="file" name="fileToUpload" id="fileToUpload" onchange="fileSelected();" accept="image/*" capture="camera" />
+        <br />
         <canvas></canvas>
       </div>
       <div id="details">
