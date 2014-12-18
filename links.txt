@@ -33,3 +33,6 @@ http://karpathy.github.io/neuralnets/
 
 # javascript demo 
 http://cs.stanford.edu/people/karpathy/convnetjs/ 
+
+#selective search
+https://ivi.fnwi.uva.nl/isis/publications/bibtexbrowser.php?key=UijlingsIJCV2013&bib=all.bib
