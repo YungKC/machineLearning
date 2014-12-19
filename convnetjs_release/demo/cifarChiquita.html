@@ -99,13 +99,13 @@ body {
 <script src="../build/util.js"></script>
 <script src="../build/convnet.js"></script>
 
-<script src="chiquita/out/chiquita_labels.js"></script>
+<script src="chiquita/out/chiquitaTall_labels.js"></script>
 
 <script>
 
 var layer_defs, net, trainer;
 var t = "layer_defs = [];\n\
-layer_defs.push({type:'input', out_sx:32, out_sy:32, out_depth:3});\n\
+layer_defs.push({type:'input', out_sx:32, out_sy:64, out_depth:3});\n\
 layer_defs.push({type:'conv', sx:5, filters:16, stride:1, pad:2, activation:'relu'});\n\
 layer_defs.push({type:'pool', sx:2, stride:2});\n\
 layer_defs.push({type:'conv', sx:5, filters:20, stride:1, pad:2, activation:'relu'});\n\
@@ -147,22 +147,22 @@ var sample_training_instance = function() {
 
   // fetch the appropriate row of the training image and reshape into a Vol
   var p = img_data[b].data;
-  var x = new convnetjs.Vol(32,32,3,0.0);
-  var W = 32*32;
+  var x = new convnetjs.Vol(32,64,3,0.0);
+  var W = 32*64;
   var j=0;
   for(var dc=0;dc<3;dc++) {
     var i=0;
-    for(var xc=0;xc<32;xc++) {
-      for(var yc=0;yc<32;yc++) {
-        var ix = ((W * k) + i) * 4 + dc;
-        x.set(yc,xc,dc,p[ix]/255.0-0.5);
+    for(var yc=0;yc<64;yc++) {
+      for(var xc=0;xc<32;xc++) {
+       var ix = ((W * k) + i) * 4 + dc;
+        x.set(xc,yc,dc,p[ix]/255.0-0.5);
         i++;
       }
     }
   }
   var dx = Math.floor(Math.random()*5-2);
   var dy = Math.floor(Math.random()*5-2);
-  x = convnetjs.augment(x, 32, dx, dy, Math.random()<0.5); //maybe flip horizontally
+  x = convnetjs.augmentRect(x, 32, 64, dx, dy, Math.random()<0.5); //maybe flip horizontally
 
   var isval = use_validation_data && n%10===0 ? true : false;
   return {x:x, label:labels[n], isval:isval};
@@ -176,15 +176,15 @@ var sample_test_instance = function() {
   var n = b*1000+k;
 
   var p = img_data[b].data;
-  var x = new convnetjs.Vol(32,32,3,0.0);
-  var W = 32*32;
+  var x = new convnetjs.Vol(32,64,3,0.0);
+  var W = 32*64;
   var j=0;
   for(var dc=0;dc<3;dc++) {
     var i=0;
-    for(var xc=0;xc<32;xc++) {
-      for(var yc=0;yc<32;yc++) {
-        var ix = ((W * k) + i) * 4 + dc;
-        x.set(yc,xc,dc,p[ix]/255.0-0.5);
+    for(var yc=0;yc<64;yc++) {
+     for(var xc=0;xc<32;xc++) {
+       var ix = ((W * k) + i) * 4 + dc;
+        x.set(xc,yc,dc,p[ix]/255.0-0.5);
         i++;
       }
     }
@@ -196,7 +196,7 @@ var sample_test_instance = function() {
   for(var k=0;k<6;k++) {
     var dx = Math.floor(Math.random()*5-2);
     var dy = Math.floor(Math.random()*5-2);
-    xs.push(convnetjs.augment(x, 32, dx, dy, k>2));
+    xs.push(convnetjs.augmentRect(x, 32, 64, dx, dy, k>2));
   }
   
   // return multiple augmentations, and we will average the network over them
@@ -204,8 +204,8 @@ var sample_test_instance = function() {
   return {x:xs, label:labels[n]};
 }
 
-var num_batches = 6; // 5 training batches, 1 test
-var test_batch = 5;
+var num_batches = 2; // 1 training batches, 1 test
+var test_batch = 1;
 var data_img_elts = new Array(num_batches);
 var img_data = new Array(num_batches);
 var loaded = new Array(num_batches);
@@ -249,7 +249,7 @@ var load_data_batch = function(batch_num) {
     if(batch_num < test_batch) { loaded_train_batches.push(batch_num); }
     console.log('finished loading data batch ' + batch_num);
   };
-  data_img_elt.src = "chiquita/out/chiquita_batch_" + batch_num + ".png";
+  data_img_elt.src = "chiquita/out/chiquitaTall_batch_" + batch_num + ".png";
 }
 
 // ------------------------

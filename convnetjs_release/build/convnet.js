@@ -233,17 +233,21 @@ var convnetjs = convnetjs || { REVISION: 'ALPHA' };
   // dx,dy are offset wrt incoming volume, of the shift
   // fliplr is boolean on whether we also want to flip left<->right
   var augment = function(V, crop, dx, dy, fliplr) {
+    return augmentRect(V, crop, crop, dx, dy, fliplr);
+  }
+
+  var augmentRect = function(V, cropx, cropy, dx, dy, fliplr) {
     // note assumes square outputs of size crop x crop
     if(typeof(fliplr)==='undefined') var fliplr = false;
-    if(typeof(dx)==='undefined') var dx = global.randi(0, V.sx - crop);
-    if(typeof(dy)==='undefined') var dy = global.randi(0, V.sy - crop);
+    if(typeof(dx)==='undefined') var dx = global.randi(0, V.sx - cropx);
+    if(typeof(dy)==='undefined') var dy = global.randi(0, V.sy - cropy);
     
     // randomly sample a crop in the input volume
     var W;
-    if(crop !== V.sx || dx!==0 || dy!==0) {
-      W = new Vol(crop, crop, V.depth, 0.0);
-      for(var x=0;x<crop;x++) {
-        for(var y=0;y<crop;y++) {
+    if(cropx !== V.sx || dx!==0 || dy!==0) {
+      W = new Vol(cropx, cropy, V.depth, 0.0);
+      for(var x=0;x<cropx;x++) {
+        for(var y=0;y<cropy;y++) {
           if(x+dx<0 || x+dx>=V.sx || y+dy<0 || y+dy>=V.sy) continue; // oob
           for(var d=0;d<V.depth;d++) {
            W.set(x,y,d,V.get(x+dx,y+dy,d)); // copy data over
@@ -328,6 +332,7 @@ var convnetjs = convnetjs || { REVISION: 'ALPHA' };
   }
   
   global.augment = augment;
+  global.augmentRect = augmentRect;
   global.img_to_vol = img_to_vol;
 
 })(convnetjs);

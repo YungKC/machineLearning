@@ -9,7 +9,7 @@ import sys
 
 millis = int(round(time.time() * 1000))
 
-srcFiles = [os.getcwd()+'/../chiquita/ducky2.jpg', os.getcwd()+'/../chiquita/hawaii2.jpg', os.getcwd()+'/../chiquita/kid2.jpg', os.getcwd()+'/../chiquita/maid2.jpg', os.getcwd()+'/../chiquita/santa2.jpg', os.getcwd()+'/../chiquita/stash2.jpg']
+srcFiles = [os.getcwd()+'/../chiquita/ducky1.jpg', os.getcwd()+'/../chiquita/hawaii1.jpg', os.getcwd()+'/../chiquita/kid1.jpg', os.getcwd()+'/../chiquita/maid1.jpg', os.getcwd()+'/../chiquita/santa1.jpg', os.getcwd()+'/../chiquita/stash1.jpg']
 
 random.seed()
 xs = []
@@ -30,7 +30,7 @@ for i in range(numImages):
 #	outLongFile = os.getcwd()+'/../chiquita/out/tmpL'+`index`+'_'+`angle`+'_'+`cometVal`+'_'+`cometRot`+'_'+`seedVal`+'_'+`attVal`+'.jpg'
 #	print outFile
 
-	subprocess.call(['convert',srcFile,'-rotate',`angle`,'-morphology','Convolve','Comet:0x'+`cometVal`+'+'+`cometRot`,'-seed',`seedVal`,'-attenuate',`attVal`,'+noise','gaussian','-gravity','Center','-crop','32x32+0+0','+repage',outFile])
+	subprocess.call(['convert',srcFile,'-rotate',`angle`,'-morphology','Convolve','Comet:0x'+`cometVal`+'+'+`cometRot`,'-seed',`seedVal`,'-attenuate',`attVal`,'+noise','gaussian','-gravity','Center','-crop','32x64+0+0','+repage',outFile])
 
 	imageData = imread(outFile)
 #	print numpy.shape(imageData)
@@ -45,7 +45,7 @@ y = numpy.concatenate(ys)
 
 outLongFile = os.getcwd()+'/../chiquita/out/tmp'+`millis`+'.png'
 labelFile = os.getcwd()+'/../chiquita/out/labels'+`millis`+'.js'
-imageDataReshaped = numpy.reshape(x,(numImages,32*32,3))
+imageDataReshaped = numpy.reshape(x,(numImages,32*64,3))
 print numpy.shape(imageDataReshaped)
 imsave(outLongFile, imageDataReshaped)
 numpy.savetxt(labelFile, y, fmt='%d', newline=', ', header='var labels=[', footer='];', comments='')
