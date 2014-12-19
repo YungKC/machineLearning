@@ -21,10 +21,11 @@
           document.getElementById('details').innerHTML += 'Name: ' + file.name + '<br>Size: ' + fileSize + '<br>Type: ' + file.type;
           document.getElementById('details').innerHTML += '<p>';
         }
-
+        
         var file = document.getElementById('fileToUpload').files[0];
-        drawOnCanvas(file);   // see Example 6
-//        displayAsImage(file); // see Example 7
+        drawOnCanvas(file);
+        // see Example 6
+        //        displayAsImage(file); // see Example 7
       }
       
       function uploadFile() {
@@ -66,40 +67,41 @@
       function uploadCanceled(evt) {
         alert("The upload has been canceled by the user or the browser dropped the connection.");
       }
-
-
-function drawOnCanvas(file) {
-  var reader = new FileReader();
-
-  reader.onload = function (e) {
-    var dataURL = e.target.result,
-        c = document.querySelector('canvas'), // see Example 4
-        ctx = c.getContext('2d'),
-        img = new Image();
-
-    img.onload = function() {
-//      c.width = img.width;
-//     c.height = img.height;
-      ctx.drawImage(img, 0, 0, width=200, height=200);
-    };
-
-    img.src = dataURL;
-  };
-
-  reader.readAsDataURL(file);
-}
-
-function displayAsImage(file) {
-  var imgURL = URL.createObjectURL(file),
-      img = document.createElement('img');
-
-  img.onload = function() {
-    URL.revokeObjectURL(imgURL);
-  };
-
-  img.src = imgURL;
-  document.body.appendChild(img);
-}
+      
+      function drawOnCanvas(file) {
+        var reader = new FileReader();
+        
+        reader.onload = function (e) {
+          var dataURL = e.target.result,
+              c = document.querySelector('canvas'), // see Example 4
+              ctx = c.getContext('2d'),
+              img = new Image();
+          
+          img.onload = function() {
+            //      c.width = img.width;
+            //     c.height = img.height;
+            document.getElementById('details').innerHTML += 'width: ' + img.width + '<br>';
+            document.getElementById('details').innerHTML += 'height: ' + img.height + '<br>';
+            ctx.drawImage(img, 0, 0, width=200, height=200);
+          };
+          
+          img.src = dataURL;
+        };
+        
+        reader.readAsDataURL(file);
+      }
+      
+      function displayAsImage(file) {
+        var imgURL = URL.createObjectURL(file),
+            img = document.createElement('img');
+        
+        img.onload = function() {
+          URL.revokeObjectURL(imgURL);
+        };
+        
+        img.src = imgURL;
+        document.body.appendChild(img);
+      }
       
     </script>
   </head>
@@ -112,7 +114,8 @@ function displayAsImage(file) {
         <br />
         <input type="file" name="fileToUpload" id="fileToUpload" onchange="fileSelected();" accept="image/*" capture="camera" />
         <br />
-        <canvas></canvas>
+        <canvas>
+        </canvas>
       </div>
       <div id="details">
       </div>
