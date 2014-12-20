@@ -76,13 +76,31 @@
               c = document.querySelector('canvas'), // see Example 4
               ctx = c.getContext('2d'),
               img = new Image();
-          
           img.onload = function() {
             //      c.width = img.width;
             //     c.height = img.height;
             document.getElementById('details').innerHTML += 'width: ' + img.width + '<br>';
             document.getElementById('details').innerHTML += 'height: ' + img.height + '<br>';
-            ctx.drawImage(img, 0, 0, width=200, height=200);
+            
+            var resizedWidth = img.width/10;
+            var resizedHeight = img.height/10;
+
+            ctx.drawImage(img, 0, 0, width=resizedWidth, height=resizedHeight);
+            var img_data = ctx.getImageData(0, 0, resizedWidth, resizedHeight);
+            document.getElementById('details').innerHTML += 'DataSize: ' + img_data.width + 'x' + img_data.height + '<p>';
+            var p = img_data.data;
+            var W = resizedWidth*resizedHeight;
+            var k = 0;
+            for(var dc=0;dc<3;dc++) {
+              var i=0;
+              for(var yc=0;yc<resizedHeight;yc++) {
+                for(var xc=0;xc<resizedWidth;xc++) {
+                 var ix = ((W * k) + i) * 4 + dc;
+//                  x.set(xc,yc,dc,p[ix]/255.0-0.5);
+                  i++;
+                }
+              }
+            }
           };
           
           img.src = dataURL;
