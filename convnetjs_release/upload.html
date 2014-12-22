@@ -129,23 +129,19 @@
             document.getElementById('details').innerHTML += 'DataSize: ' + img_data.width + 'x' + img_data.height + '<p>';
             var p = img_data.data;
             var W = resizedWidth*resizedHeight;
-            var k = 0;
             var rawData = new Float32Array(W*3);
             for(var dc=0;dc<3;dc++) {
               var i=0;
               for(var yc=0;yc<resizedHeight;yc++) {
-                for(var xc=0;xc<resizedWidth;xc++) {
-                 var ix = ((W * k) + i) * 4 + dc;
-//                  x.set(xc,yc,dc,p[ix]/255.0-0.5);
-//                  i++;
-                  rawData[i++] = p[ix]/255.0-0.5;
- 
+                for(var xc=0;xc<resizedWidth;xc++) {               
+                  var ix = i++ * 4 + dc;
+                  var rawIndex = ((yc * resizedWidth + xc) * 3)+ dc;
+                  rawData[rawIndex] = p[ix]/255.0-0.5; 
                 }
               }
             }
             generateSubImagesAsCanvas(ctx, resizedWidth, resizedHeight, 32, 64, 5);
             result = imageMatch(rawData, resizedWidth, resizedHeight);
-
           };
           
           img.src = dataURL;
@@ -172,12 +168,12 @@
       // sample an area 
       var sample_test_instance = function(rawData, srcWidth, srcHeight, startX, startY) {
         var x = new convnetjs.Vol(32,64,3,0.0);
-        var W = srcWidth*srcHeight;
-        for(var dc=0;dc<3;dc++) {
-          for(var yc=0;yc<64;yc++) {
-           for(var xc=0;xc<32;xc++) {
-             var ix = W*dc + srcWidth*yc + xc;
-             x.set(xc,yc,dc,rawData[ix]);
+        var W = srcWidth * 3;
+        for(var yc=0;yc<64;yc++) {
+          for(var xc=0;xc<32;xc++) {
+            for(var dc=0;dc<3;dc++) {
+              var ix = ((srcWidth*yc + xc) * 3) + dc;
+              x.set(xc,yc,dc,rawData[ix]);
             }
           }
         }
