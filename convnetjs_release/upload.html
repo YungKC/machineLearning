@@ -4,9 +4,41 @@
     <title>
       Take or select photo(s) and upload
     </title>
-    
+
+    <script src="demo/jquery-1.8.3.min.js"></script>
+    <script src="build/convnet.js"></script>
     <script type="text/javascript">   
-      
+
+      var classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash'];
+      layer_defs = [];
+      layer_defs.push({type:'input', out_sx:32, out_sy:64, out_depth:3});
+      layer_defs.push({type:'conv', sx:5, filters:16, stride:1, pad:2, activation:'relu'});
+      layer_defs.push({type:'pool', sx:2, stride:2});
+      layer_defs.push({type:'conv', sx:5, filters:20, stride:1, pad:2, activation:'relu'});
+      layer_defs.push({type:'pool', sx:2, stride:2});
+      layer_defs.push({type:'conv', sx:5, filters:20, stride:1, pad:2, activation:'relu'});
+      layer_defs.push({type:'pool', sx:2, stride:2});
+      layer_defs.push({type:'softmax', num_classes:6});
+
+      net = new convnetjs.Net();
+      net.makeLayers(layer_defs);
+
+      trainer = new convnetjs.SGDTrainer(net, {method:'adadelta', batch_size:4, l2_decay:0.0001});
+      load_pretrained();
+
+
+
+      function load_pretrained() {
+        $.getJSON("demo/cifarChiquita_snapshot.json", function(json){
+          net = new convnetjs.Net();
+          net.fromJSON(json);
+          trainer.learning_rate = 0.0001;
+          trainer.momentum = 0.9;
+          trainer.batch_size = 2;
+          trainer.l2_decay = 0.00001;
+        });
+      }
+
       function fileSelected() {
         var count = document.getElementById('fileToUpload').files.length;
         document.getElementById('details').innerHTML = "";
@@ -82,8 +114,13 @@
             document.getElementById('details').innerHTML += 'width: ' + img.width + '<br>';
             document.getElementById('details').innerHTML += 'height: ' + img.height + '<br>';
             
-            var resizedWidth = img.width/10;
-            var resizedHeight = img.height/10;
+            var maxLength = img.width > img.height? img.width:img.height;
+            var rescaleFactor = Math.round(maxLength / 200);
+            if (rescaleFactor < 1) {
+              rescaleFactor = 1;
+            }
+            var resizedWidth = img.width/rescaleFactor;
+            var resizedHeight = img.height/rescaleFactor;
 
             ctx.drawImage(img, 0, 0, width=resizedWidth, height=resizedHeight);
             var img_data = ctx.getImageData(0, 0, resizedWidth, resizedHeight);
@@ -101,7 +138,7 @@
                  var ix = ((W * k) + i) * 4 + dc;
 //                  x.set(xc,yc,dc,p[ix]/255.0-0.5);
 //                  i++;
-                  rawData[i] = p[ix]/255.0-0.5;
+                  rawData[i++] = p[ix]/255.0-0.5;
  
                 }
               }
@@ -118,8 +155,40 @@
       }
 
       function imageMatch(rawData, srcWidth, srcHeight) {
-        
+        var num_classes = net.layers[net.layers.length-1].out_depth;
+        // forward prop it through the network
+        var aavg = new convnetjs.Vol(1,1,num_classes,0.0);
+        // ensures we always have a list, regardless if above returns single item or list
+        var xs = sample_test_instance(rawData, srcWidth, srcHeight, 0, 0);
+        var n = xs.length;
+        for(var i=0;i<n;i++) {
+          var a = net.forward(xs[i]);
+          aavg.addFrom(a);
+        }
+
         return null;
+      }
+
+      // sample an area 
+      var sample_test_instance = function(rawData, srcWidth, srcHeight, startX, startY) {
+        var x = new convnetjs.Vol(32,64,3,0.0);
+        var W = srcWidth*srcHeight;
+        for(var dc=0;dc<3;dc++) {
+          for(var yc=0;yc<64;yc++) {
+           for(var xc=0;xc<32;xc++) {
+             var ix = W*dc + srcWidth*yc + xc;
+             x.set(xc,yc,dc,rawData[ix]);
+            }
+          }
+        }
+
+        // distort position and maybe flip
+        var xs = [];
+        xs.push(x, 32, 0, 0, false); // push an un-augmented copy
+        
+        // return multiple augmentations, and we will average the network over them
+        // to increase performance
+        return xs;
       }
 
       function generateSubImagesAsCanvas(ctx, srcWidth, srcHeight, croppedWidth, croppedHeight, strideLength) {
