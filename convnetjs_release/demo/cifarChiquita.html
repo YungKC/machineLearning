@@ -99,7 +99,7 @@ body {
 <script src="../build/util.js"></script>
 <script src="../build/convnet.js"></script>
 
-<script src="chiquita/out/chiquitaTall_labels.js"></script>
+<script src="chiquita/out/chiquitaTallMix_labels.js"></script>
 
 <script>
 
@@ -112,7 +112,7 @@ layer_defs.push({type:'conv', sx:5, filters:20, stride:1, pad:2, activation:'rel
 layer_defs.push({type:'pool', sx:2, stride:2});\n\
 layer_defs.push({type:'conv', sx:5, filters:20, stride:1, pad:2, activation:'relu'});\n\
 layer_defs.push({type:'pool', sx:2, stride:2});\n\
-layer_defs.push({type:'softmax', num_classes:6});\n\
+layer_defs.push({type:'softmax', num_classes:7});\n\
 \n\
 net = new convnetjs.Net();\n\
 net.makeLayers(layer_defs);\n\
@@ -123,7 +123,7 @@ trainer = new convnetjs.SGDTrainer(net, {method:'adadelta', batch_size:4, l2_dec
 // ------------------------
 // BEGIN MNIST SPECIFIC STUFF
 // ------------------------
-var classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash'];
+var classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash', 'notFound'];
 
 var use_validation_data = true;
 var sample_training_instance = function() {
@@ -204,8 +204,8 @@ var sample_test_instance = function() {
   return {x:xs, label:labels[n]};
 }
 
-var num_batches = 2; // 1 training batches, 1 test
-var test_batch = 1;
+var num_batches = 6; // 5 training batches, 1 test
+var test_batch = 5;
 var data_img_elts = new Array(num_batches);
 var img_data = new Array(num_batches);
 var loaded = new Array(num_batches);
@@ -249,7 +249,7 @@ var load_data_batch = function(batch_num) {
     if(batch_num < test_batch) { loaded_train_batches.push(batch_num); }
     console.log('finished loading data batch ' + batch_num);
   };
-  data_img_elt.src = "chiquita/out/chiquitaTall_batch_" + batch_num + ".png";
+  data_img_elt.src = "chiquita/out/chiquitaTallMix_batch_" + batch_num + ".png";
 }
 
 // ------------------------
