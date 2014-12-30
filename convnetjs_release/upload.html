@@ -118,7 +118,7 @@
 
             var maxLength = img.width > img.height? img.width:img.height;
 //            var rescaleFactor = Math.round(maxLength / 102);
-            var rescaleFactor = Math.round(img.height / 102);
+            var rescaleFactor = img.height / 102;
             if (maxLength > 2000) {
               rescaleFactor = 32;
             }
@@ -127,8 +127,8 @@
             if (rescaleFactor < 1) {
               rescaleFactor = 1;
             }
-            var resizedWidth = img.width/rescaleFactor;
-            var resizedHeight = img.height/rescaleFactor;
+            var resizedWidth = Math.round(img.width/rescaleFactor);
+            var resizedHeight = Math.round(img.height/rescaleFactor);
 
             ctx.drawImage(img, 0, 0, width=resizedWidth, height=resizedHeight);
             var img_data = ctx.getImageData(0, 0, resizedWidth, resizedHeight);
@@ -148,7 +148,7 @@
                 }
               }
             }
-            generateSubImagesAsCanvas(ctx, resizedWidth, resizedHeight, 32, 64, 5);
+            generateSubImagesAsCanvas(ctx, resizedWidth, resizedHeight, 32, 64, 4);
             result = imageMatch(rawData, resizedWidth, resizedHeight);
             var newResult = matchedObject(rawData, resizedWidth, resizedHeight, 32, 64, 4)
           };
@@ -181,9 +181,12 @@
 
         var xLoc=0, yLoc=0, matchedType=notFoundType, maxProb = -1;
 
-        for (var y=0; y+windowHeight<srcHeight; y+=stride) {
-          for (var x=0; x+windowWidth<srcWidth; x+=stride) {
-            document.getElementById('details').innerHTML += '<br>Processing at (' + x +', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb;
+        for (var y=0; y+windowHeight<=srcHeight; y+=stride) {
+          for (var x=0; x+windowWidth<=srcWidth; x+=stride) {
+            if  (x==20 && y==24) {
+              alert("here");
+            }
+            document.getElementById('details').innerHTML += '<br>Processing at (' + x +', ' + y + ')... '
             var xs = sample_test_instance(rawData, srcWidth, srcHeight, x, y);
             var a = net.forward(xs[0]);
             
@@ -200,6 +203,7 @@
               matchedType = foundType;
               xLoc = x;
               yLoc = y; 
+              document.getElementById('details').innerHTML += '<br>Found at (' + x +', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb;
             }
           }
         };
