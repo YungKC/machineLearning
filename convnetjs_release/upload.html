@@ -111,11 +111,19 @@
           img.onload = function() {
             //      c.width = img.width;
             //     c.height = img.height;
+
             document.getElementById('details').innerHTML += 'width: ' + img.width + '<br>';
             document.getElementById('details').innerHTML += 'height: ' + img.height + '<br>';
             
+
             var maxLength = img.width > img.height? img.width:img.height;
-            var rescaleFactor = Math.round(maxLength / 100);
+//            var rescaleFactor = Math.round(maxLength / 102);
+            var rescaleFactor = Math.round(img.height / 102);
+            if (maxLength > 2000) {
+              rescaleFactor = 32;
+            }
+            alert('maxLength: ' + maxLength + ', rescale: ' + rescaleFactor);
+
             if (rescaleFactor < 1) {
               rescaleFactor = 1;
             }
@@ -142,6 +150,7 @@
             }
             generateSubImagesAsCanvas(ctx, resizedWidth, resizedHeight, 32, 64, 5);
             result = imageMatch(rawData, resizedWidth, resizedHeight);
+            var newResult = matchedObject(rawData, resizedWidth, resizedHeight, 32, 64, 4)
           };
           
           img.src = dataURL;
@@ -165,6 +174,43 @@
         return null;
       }
 
+      var matchedObject = function(rawData, srcWidth, srcHeight, windowWidth, windowHeight, stride) {
+
+        var num_classes = net.layers[net.layers.length-1].out_depth;
+        var notFoundType = num_classes-1;
+
+        var xLoc=0, yLoc=0, matchedType=notFoundType, maxProb = -1;
+
+        for (var y=0; y+windowHeight<srcHeight; y+=stride) {
+          for (var x=0; x+windowWidth<srcWidth; x+=stride) {
+            document.getElementById('details').innerHTML += '<br>Processing at (' + x +', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb;
+            var xs = sample_test_instance(rawData, srcWidth, srcHeight, x, y);
+            var a = net.forward(xs[0]);
+            
+            var foundType = -1;
+            var typeProb = -1;
+            for (var typeID=0; typeID < num_classes; typeID++) {
+              if (a.w[typeID] > typeProb) {
+                foundType = typeID;
+                typeProb = a.w[typeID];
+              }
+            }
+            if (typeProb > maxProb && foundType != notFoundType) {
+              maxProb = typeProb;
+              matchedType = foundType;
+              xLoc = x;
+              yLoc = y; 
+            }
+          }
+        };
+        if (matchedType != notFoundType) {
+          alert('Found ' + classes_txt[matchedType] + ' at (' + xLoc +', ' + yLoc + ') with confidence of ' + maxProb);
+        } else {
+          alert('Not Found!');
+        }
+        return {x: xLoc, y: yLoc, matchedType: matchedType, matchedProb: maxProb};
+      }
+
       // sample an area 
       var sample_test_instance = function(rawData, srcWidth, srcHeight, startX, startY) {
         var x = new convnetjs.Vol(32,64,3,0.0);
@@ -172,13 +218,12 @@
         for(var yc=0;yc<64;yc++) {
           for(var xc=0;xc<32;xc++) {
             for(var dc=0;dc<3;dc++) {
-              var ix = ((srcWidth*yc + xc) * 3) + dc;
+              var ix = ((srcWidth*(yc+startY) + (xc+startX)) * 3) + dc;
               x.set(xc,yc,dc,rawData[ix]);
             }
           }
         }
 
-        // distort position and maybe flip
         var xs = [];
         xs.push(x); // push an un-augmented copy
         
