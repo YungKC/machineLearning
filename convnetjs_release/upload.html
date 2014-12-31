@@ -11,65 +11,7 @@
   <script type="text/javascript">   
 
   var classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash', 'notFound'];
-  layer_defs = [];
-  layer_defs.push({
-      type: 'input',
-      out_sx: 32,
-      out_sy: 64,
-      out_depth: 3
-  });
-  layer_defs.push({
-      type: 'conv',
-      sx: 5,
-      filters: 16,
-      stride: 1,
-      pad: 2,
-      activation: 'relu'
-  });
-  layer_defs.push({
-      type: 'pool',
-      sx: 2,
-      stride: 2
-  });
-  layer_defs.push({
-      type: 'conv',
-      sx: 5,
-      filters: 20,
-      stride: 1,
-      pad: 2,
-      activation: 'relu'
-  });
-  layer_defs.push({
-      type: 'pool',
-      sx: 2,
-      stride: 2
-  });
-  layer_defs.push({
-      type: 'conv',
-      sx: 5,
-      filters: 20,
-      stride: 1,
-      pad: 2,
-      activation: 'relu'
-  });
-  layer_defs.push({
-      type: 'pool',
-      sx: 2,
-      stride: 2
-  });
-  layer_defs.push({
-      type: 'softmax',
-      num_classes: classes_txt.length
-  });
-
-  net = new convnetjs.Net();
-  net.makeLayers(layer_defs);
-
-  trainer = new convnetjs.SGDTrainer(net, {
-      method: 'adadelta',
-      batch_size: 4,
-      l2_decay: 0.0001
-  });
+  var net = new convnetjs.Net();
   load_pretrained();
 
   function load_pretrained() {
