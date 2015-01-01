@@ -99,7 +99,7 @@ body {
 <script src="../build/util.js"></script>
 <script src="../build/convnet.js"></script>
 
-<script src="chiquita/out/chiquitaTallMixLogo3_labels.js"></script>
+<script src="chiquita/out/chiquita_labels.js"></script>
 
 <script>
 
@@ -249,7 +249,7 @@ var load_data_batch = function(batch_num) {
     if(batch_num < test_batch) { loaded_train_batches.push(batch_num); }
     console.log('finished loading data batch ' + batch_num);
   };
-  data_img_elt.src = "chiquita/out/chiquitaTallMixLogo3_batch_" + batch_num + ".png";
+  data_img_elt.src = "chiquita/out/chiquita_batch_" + batch_num + ".png";
 }
 
 // ------------------------
