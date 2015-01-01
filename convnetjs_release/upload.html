@@ -12,20 +12,17 @@
   <script type="text/javascript">   
 
   var classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash', 'notFound'];
-  var net = new convnetjs.Net();
-  load_pretrained();
-  var progressText = '';
-
-  function load_pretrained() {
-      $.getJSON("demo/cifarChiquita_snapshot.json", function(json) {
-          net = new convnetjs.Net();
-          net.fromJSON(json);
-      });
-  }
+  var netConfigJson;
+  $.getJSON('demo/cifarChiquita_snapshot.json', function(json) {
+      netConfigJson = json;
+  });
 
   function fileSelected() {
       var count = document.getElementById('fileToUpload').files.length;
       document.getElementById('details').innerHTML = "";
+      document.getElementById('progress').innerHTML = "";
+      document.getElementById('found').innerHTML = "";
+      document.getElementById('tiles').innerHTML = "";
       for (var index = 0; index < count; index++) {
           var file = document.getElementById('fileToUpload').files[index];
           var fileSize = 0;
@@ -57,7 +54,7 @@
               var exif, transform = "none";
               EXIF.getData(img, function() {
                   exif = this.exifdata;
-                  alert(EXIF.pretty(this));
+                  document.getElementById('details').innerHTML += EXIF.pretty(this);
                   if (exif.Orientation === 8) {
                       width = img.height;
                       height = img.width;
@@ -77,7 +74,7 @@
                       width = img.width;
                       height = img.height;
                   }
-                  var MAX_WIDTH = 100;
+                  var MAX_WIDTH = 1000;
                   var MAX_HEIGHT = 100;
                   if (width / MAX_WIDTH > height / MAX_HEIGHT) {
                       if (width > MAX_WIDTH) {
@@ -135,23 +132,26 @@
                       }
                   }
               }
-//              generateSubImagesAsCanvas(ctx, width, height, 32, 64, 4);
 
-              var params = {net:net, classes_txt:classes_txt, rawData:rawData, srcWidth:width, srcHeight:height, windowWidth:32, windowHeight:64, stride:4};
-              progressText = '';
-//              var newResult = matchedObject(params)
+              var params = {netConfig:netConfigJson, classes_txt:classes_txt, rawData:rawData, srcWidth:width, srcHeight:height, windowWidth:32, windowHeight:64, stride:4};
 
-              document.getElementById("details").innerHTML = '';
-              matchedObject(params);
-
-              // var worker = new Worker('locateFeature.js');
-              // worker.onmessage = function(e) {
-              //   document.getElementById("details").innerHTML += '<br>'+e.data.ProgressText;
-              // };
-              // worker.postMessage({'cmd':   'matchedObject', 
-              //           'value': params
-              //         });
-              document.getElementById('details').innerHTML = progressText;
+              var worker = new Worker('locateFeature.js');
+              worker.onmessage = function(e) {
+                if (e.data.ProgressText != undefined) {
+                  document.getElementById("progress").innerHTML = e.data.ProgressText;
+                } else if (e.data.FoundText != undefined) {
+                  document.getElementById("found").innerHTML += '<br>'+e.data.FoundText;
+                } else if (e.data.ResultText != undefined) {
+                  alert(e.data.ResultText);
+                  if (e.data.result != undefined) {
+                    // draw rect around found region
+                    ctx.rect(e.data.result.x, e.data.result.y, 32, 64);
+                    ctx.stroke();
+                  }
+//                  generateSubImagesAsCanvas(ctx, width, height, 32, 64, 4);
+                }
+              };
+              worker.postMessage({'cmd':   'matchedObject', 'value': params});
 
           };
 
@@ -167,7 +167,7 @@
               var imageData = ctx.getImageData(xOffset, yOffset, croppedWidth, croppedHeight);
               displayAsCanvas(imageData, croppedWidth, croppedHeight, strideLength);
           }
-          document.body.appendChild(document.createElement("br"));
+          document.getElementById('tiles').appendChild(document.createElement("br"));
       }
   }
 
@@ -178,7 +178,7 @@
       aCanvas.padding = padding;
       var ctx = aCanvas.getContext('2d');
       ctx.putImageData(imageData, 0, 0);
-      document.body.appendChild(aCanvas);
+      document.getElementById('tiles').appendChild(aCanvas);
   }
         
   </script>
@@ -198,6 +198,10 @@
     <div id="details">
     </div>
     <div id="progress">
+    </div>
+    <div id="found">
+    </div>
+    <div id="tiles">
     </div>
   </form>
 </body>

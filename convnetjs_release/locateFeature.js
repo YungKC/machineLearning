@@ -1,5 +1,6 @@
   var matchedObject = function(params) {
-      var net = params.net;
+      importScripts('build/convnet.js');
+      var net = load_pretrained(params.netConfig);
       var classes_txt = params.classes_txt;
       var rawData = params.rawData;
       var srcWidth = params.srcWidth;
@@ -18,11 +19,7 @@
 
       for (var y = 0; y + windowHeight <= srcHeight; y += stride) {
         for (var x = 0; x + windowWidth <= srcWidth; x += stride) {
-            // if  (x==20 && y==24) {
-            //   alert("here");
-            // }
-//          self.postMessage({'ProgressText': 'Processing at (' + x + ', ' + y + ')... '});
-          progressText += '<br>' + 'Processing at (' + x + ', ' + y + ')... ';
+          self.postMessage({'ProgressText': 'Processing at (' + x + ', ' + y + ')... '});
 
           var xs = sample_test_instance(rawData, srcWidth, srcHeight, x, y);
           var a = net.forward(xs[0]);
@@ -40,22 +37,23 @@
               matchedType = foundType;
               xLoc = x;
               yLoc = y;
-//              self.postMessage({'ProgressText': 'Found at (' + x + ', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb});
-              progressText += '<br>' + 'Found at (' + x + ', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb;
+              self.postMessage({FoundText: 'Found at (' + x + ', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb});
           }
         }
       };
+      var result;
       if (matchedType != notFoundType) {
-          alert('Found ' + classes_txt[matchedType] + ' at (' + xLoc + ', ' + yLoc + ') with confidence of ' + maxProb);
-      } else {
-          alert('Not Found!');
-      }
-      return {
+        result = {
           x: xLoc,
           y: yLoc,
           matchedType: matchedType,
           matchedProb: maxProb
-      };
+        };
+        self.postMessage({result:result, ResultText: 'Found ' + classes_txt[matchedType] + ' at (' + xLoc + ', ' + yLoc + ') with confidence of ' + maxProb});
+      } else {
+        self.postMessage({ResultText: 'Not Found!'});
+      }
+      return result;
   }
 
   // sample an area 
@@ -79,6 +77,13 @@
       return xs;
   }
 
+  function load_pretrained(netConfigJson) {
+      var net = new convnetjs.Net();
+      net.fromJSON(netConfigJson);
+      return net;
+  }
+
   self.onmessage = function(e) {
+    window = self;
     matchedObject(e.data.value);
   }
