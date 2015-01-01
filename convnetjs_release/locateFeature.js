@@ -32,7 +32,7 @@
                   typeProb = a.w[typeID];
               }
           }
-          if (typeProb > maxProb && foundType != notFoundType) {
+          if (typeProb > maxProb && foundType != notFoundType && typeProb != 1) {
               maxProb = typeProb;
               matchedType = foundType;
               xLoc = x;
