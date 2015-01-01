@@ -9,7 +9,9 @@ import sys
 
 millis = int(round(time.time() * 1000))
 
-srcFiles = [os.getcwd()+'/../chiquita/ducky1.jpg', os.getcwd()+'/../chiquita/hawaii1.jpg', os.getcwd()+'/../chiquita/kid1.jpg', os.getcwd()+'/../chiquita/maid1.jpg', os.getcwd()+'/../chiquita/santa1.jpg', os.getcwd()+'/../chiquita/stash1.jpg']
+srcFiles = [os.getcwd()+'/../chiquita/ducky1.jpg', os.getcwd()+'/../chiquita/hawaii1.jpg', os.getcwd()+'/../chiquita/kid1.jpg', os.getcwd()+'/../chiquita/maid1.jpg', os.getcwd()+'/../chiquita/santa1.jpg', os.getcwd()+'/../chiquita/stash1.jpg',
+	os.getcwd()+'/../chiquita/logoDucky.jpg', os.getcwd()+'/../chiquita/logoHawaii.jpg', os.getcwd()+'/../chiquita/logoKid.jpg', os.getcwd()+'/../chiquita/logo2.jpg', os.getcwd()+'/../chiquita/logo2.jpg', os.getcwd()+'/../chiquita/logo2.jpg',
+	os.getcwd()+'/../chiquita/logo.jpg', os.getcwd()+'/../chiquita/logo.jpg', os.getcwd()+'/../chiquita/logo1.jpg', os.getcwd()+'/../chiquita/logo1.jpg', os.getcwd()+'/../chiquita/logo1.jpg', os.getcwd()+'/../chiquita/logo1.jpg']
 
 random.seed()
 xs = []
@@ -19,15 +21,16 @@ outFile = os.getcwd()+'/../chiquita/out/tmp.png'
 
 rotAngle = 0
 for i in range(numImages):
-	index = random.randint(0,20)		# if index between 0 and 5, then use target images, otherwise, use random image as negative case.
-	if index <= 5:
+	index = random.randint(0,40)		# if index between 0 and 5, then use target images, otherwise, use random image as negative case.
+	if index <= 17:
 		srcFile = srcFiles[index]
 		angle = random.randint(-10,10)
 		cometVal = random.randint(0, 1)
 		cometRot = random.randint(0,3)*90
 		seedVal = random.randint(0,10000)
 		attVal = random.randint(0,100)*0.01
-
+		if index > 5:
+			index=6
 	#	outFile = os.getcwd()+'/../chiquita/out/tmp'+`index`+'_'+`angle`+'_'+`cometVal`+'_'+`cometRot`+'_'+`seedVal`+'_'+`attVal`+'.jpg'
 	#	outLongFile = os.getcwd()+'/../chiquita/out/tmpL'+`index`+'_'+`angle`+'_'+`cometVal`+'_'+`cometRot`+'_'+`seedVal`+'_'+`attVal`+'.jpg'
 	#	print outFile

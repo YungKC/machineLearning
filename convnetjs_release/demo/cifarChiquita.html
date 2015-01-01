@@ -99,7 +99,7 @@ body {
 <script src="../build/util.js"></script>
 <script src="../build/convnet.js"></script>
 
-<script src="chiquita/out/chiquitaTallMix_labels.js"></script>
+<script src="chiquita/out/chiquitaTallMixLogo3_labels.js"></script>
 
 <script>
 
@@ -204,8 +204,8 @@ var sample_test_instance = function() {
   return {x:xs, label:labels[n]};
 }
 
-var num_batches = 6; // 5 training batches, 1 test
-var test_batch = 5;
+var num_batches = 10; // 9 training batches, 1 test
+var test_batch = 9;
 var data_img_elts = new Array(num_batches);
 var img_data = new Array(num_batches);
 var loaded = new Array(num_batches);
@@ -221,8 +221,8 @@ $(window).load(function() {
 
   for(var k=0;k<loaded.length;k++) { loaded[k] = false; }
 
-  load_data_batch(0); // async load train set batch 0 (6 total train batches)
-  load_data_batch(test_batch); // async load test set (batch 6)
+  load_data_batch(0); // async load train set batch 0 (10 total train batches)
+  load_data_batch(test_batch); // async load test set (batch 9)
   start_fun();
 });
 
@@ -249,7 +249,7 @@ var load_data_batch = function(batch_num) {
     if(batch_num < test_batch) { loaded_train_batches.push(batch_num); }
     console.log('finished loading data batch ' + batch_num);
   };
-  data_img_elt.src = "chiquita/out/chiquitaTallMix_batch_" + batch_num + ".png";
+  data_img_elt.src = "chiquita/out/chiquitaTallMixLogo3_batch_" + batch_num + ".png";
 }
 
 // ------------------------
