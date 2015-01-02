@@ -17,6 +17,12 @@
           matchedType = notFoundType,
           maxProb = -1;
 
+      var minX = Math.min(5,(srcWidth-windowWidth)/2),
+          minY = Math.min(5,(srcHeight-windowHeight)/2),
+          maxX = srcWidth-5-windowWidth,
+          maxY = srcHeight-5-windowHeight;
+
+      self.postMessage({FoundText: 'mins: (' + minX + ', ' + minY + ') to (' + maxX + ', ' + maxY + ')'}); 
       for (var y = 0; y + windowHeight <= srcHeight; y += stride) {
         for (var x = 0; x + windowWidth <= srcWidth; x += stride) {
           self.postMessage({'ProgressText': 'Processing at (' + x + ', ' + y + ')... '});
@@ -33,11 +39,17 @@
               }
           }
           if (typeProb > maxProb && foundType != notFoundType && typeProb != 1) {
+            self.postMessage({FoundText: 'Found at (' + x + ', ' + y + '): ' + classes_txt[foundType] + ' : ' + typeProb});
+            // ensure the found location is not near the edge to filter out false positives
+            if (x < minX || y < minY || x > maxX || y > maxY) {
+              self.postMessage({FoundText: '-- Too near the edge. Rejected.'})
+            } else {
+              self.postMessage({FoundText: '-- Verified not near the edge. Accepted.'})
               maxProb = typeProb;
               matchedType = foundType;
               xLoc = x;
               yLoc = y;
-              self.postMessage({FoundText: 'Found at (' + x + ', ' + y + '): ' + classes_txt[matchedType] + ' : ' + maxProb});
+            }
           }
         }
       };

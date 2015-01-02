@@ -54,7 +54,7 @@
               var exif, transform = "none";
               EXIF.getData(img, function() {
                   exif = this.exifdata;
-                  document.getElementById('details').innerHTML += EXIF.pretty(this);
+//                  document.getElementById('details').innerHTML += EXIF.pretty(this);
                   if (exif.Orientation === 8) {
                       width = img.height;
                       height = img.width;
