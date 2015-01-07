@@ -1,0 +1,6 @@
+todo:
+
+- convnetjs: add image alpha compression via imagemagick when generating test images: +level [0-40]%
+
+
+

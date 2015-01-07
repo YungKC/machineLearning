@@ -36,3 +36,18 @@ http://cs.stanford.edu/people/karpathy/convnetjs/
 
 #selective search
 https://ivi.fnwi.uva.nl/isis/publications/bibtexbrowser.php?key=UijlingsIJCV2013&bib=all.bib
+
+
+
+-------------
+
+computer vision
+
+jsfeat
+
+good blog on computer vision
+http://www.pyimagesearch.com/
+
+http://computer-vision-talks.com/
+
+
