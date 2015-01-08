@@ -50,4 +50,8 @@ http://www.pyimagesearch.com/
 
 http://computer-vision-talks.com/
 
+------------------------
+
+Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition
+http://arxiv.org/pdf/1406.4729v1.pdf
 
