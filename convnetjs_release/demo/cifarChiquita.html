@@ -162,7 +162,7 @@ var sample_training_instance = function() {
   }
   var dx = Math.floor(Math.random()*5-2);
   var dy = Math.floor(Math.random()*5-2);
-  x = convnetjs.augmentRect(x, 32, 64, dx, dy, Math.random()<0.5); //maybe flip horizontally
+  x = convnetjs.augmentRect(x, 32, 64, dx, dy, false); //maybe flip horizontally
 
   var isval = use_validation_data && n%10===0 ? true : false;
   return {x:x, label:labels[n], isval:isval};
@@ -196,7 +196,7 @@ var sample_test_instance = function() {
   for(var k=0;k<6;k++) {
     var dx = Math.floor(Math.random()*5-2);
     var dy = Math.floor(Math.random()*5-2);
-    xs.push(convnetjs.augmentRect(x, 32, 64, dx, dy, k>2));
+    xs.push(convnetjs.augmentRect(x, 32, 64, dx, dy, false));
   }
   
   // return multiple augmentations, and we will average the network over them

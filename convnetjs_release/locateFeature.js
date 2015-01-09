@@ -17,10 +17,10 @@
           matchedType = notFoundType,
           maxProb = -1;
 
-      var minX = Math.min(5,(srcWidth-windowWidth)/2),
-          minY = Math.min(5,(srcHeight-windowHeight)/2),
-          maxX = srcWidth-5-windowWidth,
-          maxY = srcHeight-5-windowHeight;
+      var minX = Math.min(2,(srcWidth-windowWidth)/2),
+          minY = Math.min(2,(srcHeight-windowHeight)/2),
+          maxX = srcWidth-2-windowWidth,
+          maxY = srcHeight-2-windowHeight;
 
       self.postMessage({FoundText: 'mins: (' + minX + ', ' + minY + ') to (' + maxX + ', ' + maxY + ')'}); 
       for (var y = 0; y + windowHeight <= srcHeight; y += stride) {

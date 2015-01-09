@@ -10,8 +10,8 @@ import os
 
 millis = int(round(time.time() * 1000))
 
-srcFiles = [['ducky1.jpg','ducky2.jpg','ducky3.jpg','ducky4.jpg','ducky5.jpg','ducky6.jpg'], ['hawaii1.jpg','hawaii2.jpg','hawaii3.jpg'], 
-			['kid1.jpg','kid2.jpg','kid3.jpg'], ['maid1.jpg','maid2.jpg'], ['santa1.jpg','santa2.jpg'], ['stash1.jpg', 'stash2.jpg']]
+srcFiles = [['ducky1-Edit.jpg','ducky2-Edit.jpg','ducky3-Edit.jpg','ducky4-Edit.jpg','ducky5-Edit.jpg','ducky6-Edit.jpg'], ['hawaii1-Edit.jpg','hawaii2-Edit.jpg','hawaii3-Edit.jpg'], 
+			['kid1-Edit.jpg','kid2-Edit.jpg','kid3-Edit.jpg'], ['maid1-Edit.jpg','maid2-Edit.jpg'], ['santa1-Edit.jpg','santa2-Edit.jpg'], ['stash1-Edit.jpg', 'stash2-Edit.jpg']]
 numClasses = len(srcFiles)
 
 random.seed()
@@ -50,8 +50,8 @@ for loopCount in range(10):
 #			print inFileName
 			srcFile = os.path.join(os.getcwd(),'..','chiquita','srcImages', inFileName)
 			index=numClasses
-			xoffset = random.randint(0,4) + 4
-			yoffset = random.randint(0,6) + 6
+			xoffset = random.randint(0,4) + 8
+			yoffset = random.randint(0,6) + 10
 			offsetSign = random.randint(0,3)
 
 			if offsetSign == 0:
