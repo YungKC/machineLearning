@@ -2,6 +2,7 @@ import numpy as np
 import json
 from scipy import misc
 
+#TODO: need to move the layer initialization portion out of the convolveKai method
 
 from scipy.signal import convolve2d
 from skimage.measure import block_reduce
@@ -39,7 +40,17 @@ def convolveKai(inData, inSizeX, inSizeY, layer):
 		pooledResult[filterID][pooledResult[filterID] < 0] = 0
 	return result, pooledResult
 
-
+def fcLayer(inData, layer):
+	filter_depth = layer['out_depth']
+	result = np.zeros([filter_depth])
+	in_size = layer['num_inputs']
+	wnp = np.zeros([filter_depth, in_size])
+	for filterID in range(filter_depth):
+	    w=layer['filters'][filterID]['w']
+	    for i in range(in_size):
+	        wnp[filterID][i] = w[str(i)]
+	    result[filterID] = sum(wnp[filterID] * inData) + layer['biases']['w'][str(filterID)]
+	return result
 
 ducky = misc.imread('../image/download.png')
 duckyRescaled = ducky /255.0 - 0.5
@@ -70,6 +81,14 @@ result, pooledResult = convolveKai(pooledResult, inSizeX/4, inSizeY/4, layer)
 
 # display the result of the first image pixel
 pooledResult[np.ix_(np.arange(layer['out_depth']),[0],[0])].flatten()
+
+#switch axes in preparation of fully connected layer
+swappedResult = np.swapaxes(pooledResult,0,2)
+swappedResult = np.swapaxes(swappedResult,0,1)
+swappedResult = swappedResult.flatten()
+
+layer = model['layers'][10]
+result = fcLayer(swappedResult, layer)
 
 
 
