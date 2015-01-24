@@ -28,8 +28,11 @@
           self.postMessage({'ProgressText': 'Processing at (' + x + ', ' + y + ')... '});
 
           var xs = sample_test_instance(rawData, srcWidth, srcHeight, x, y);
+          var timeVal = new Date().getTime()
           var a = net.forward(xs[0]);
-
+          if (y==0 && x==0) {
+            self.postMessage({FoundText: '*** forward time: ' + (new Date().getTime() - timeVal)})
+          }
           var foundType = -1;
           var typeProb = -1;
           for (var typeID = 0; typeID < num_classes; typeID++) {
