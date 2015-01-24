@@ -1,10 +1,25 @@
+import numpy as np
+import json
 from scipy import misc
+
 ducky = misc.imread('../image/download.png')
 duckyRescaled = ducky /255.0 - 0.5
 duckyRescaled = duckyRescaled[:,:,0:3]
 
-import numpy as np
-import json
+inSizeX = 32
+inSizeY = 64
+
+# get the top left corner roi of 32x64 rectangle
+d0=duckyRescaled[0:inSizeY,0:inSizeX,0]
+d1=duckyRescaled[0:inSizeY,0:inSizeX,1]
+d2=duckyRescaled[0:inSizeY,0:inSizeX,2]
+
+inData = np.empty([3,inSizeY,inSizeX])
+inData[0] = duckyRescaled[0:inSizeY,0:inSizeX,0]
+inData[1] = duckyRescaled[0:inSizeY,0:inSizeX,1]
+inData[2] = duckyRescaled[0:inSizeY,0:inSizeX,2]
+
+
 with open('../model/chiquita.json') as json_data:
     model = json.load(json_data)
     json_data.close()
@@ -24,37 +39,35 @@ for filterID in range(filter_depth):
     for i in range(filter_sx*filter_sy*colorDepth):
         wnp[filterID][i] = w[str(i)]
 
-filterID = 0
-convolveMatrix = wnp[filterID].reshape([filter_sx,filter_sy,colorDepth])
+f = np.empty([filter_depth,colorDepth,filter_sx,filter_sy])
+for filterID in range(filter_depth):
+	tmp = wnp[filterID].reshape([filter_sx,filter_sy,colorDepth])
+	for colorID in range(colorDepth):
+		f[filterID][colorID]=tmp[:,:,colorID]
+		f[filterID][colorID]=np.fliplr(np.flipud(f[filterID][colorID]))
 
-# get the top left corner roi of 32x64 rectangle
-d0=duckyRescaled[0:64,0:32,0]
-d1=duckyRescaled[0:64,0:32,1]
-d2=duckyRescaled[0:64,0:32,2]
-f0=convolveMatrix[:,:,0]
-f1=convolveMatrix[:,:,1]
-f2=convolveMatrix[:,:,2]
 
 from scipy.signal import convolve2d
-c0=convolve2d(d0,f0,mode='same',boundary='fill',fillvalue=0)
-c1=convolve2d(d1,f1,mode='same',boundary='fill',fillvalue=0)
-c2=convolve2d(d2,f2,mode='same',boundary='fill',fillvalue=0)
-c=c0+c1+c2
+from skimage.measure import block_reduce
 
-tmp = np.zeros([5,5])
-tmp = np.vstack(([[0,0,0],[0,0,0]],d0[0:3,0:3]))
-tmp = np.hstack(([[0,0],[0,0],[0,0],[0,0],[0,0]],tmp))
-s0=sum(sum(f0*tmp))
+def convolve():
+	pooledResult = np.empty([filter_depth,inSizeY/2,inSizeX/2])
+	result = np.empty([filter_depth,inSizeY,inSizeX])
+	for filterID in range(filter_depth):
+		c = np.zeros([inSizeY, inSizeX])
+		for colorID in range(colorDepth):
+			c+=convolve2d(inData[colorID],f[filterID][colorID],mode='same',boundary='fill',fillvalue=0)
+		result[filterID] = c+layer['biases']['w'][str(filterID)]
+		# max pool here
+		pooledResult[filterID]  = block_reduce(result[filterID] , block_size=(2,2), func=np.max)
+		# relu step is here
+		pooledResult[filterID][pooledResult[filterID] < 0] = 0
+	return result, pooledResult
 
-tmp = np.zeros([5,5])
-tmp = np.vstack(([[0,0,0],[0,0,0]],d1[0:3,0:3]))
-tmp = np.hstack(([[0,0],[0,0],[0,0],[0,0],[0,0]],tmp))
-s1=sum(sum(f1*tmp))
+result, pooledResult = convolve()
+result.shape
+pooledResult.shape
 
-tmp = np.zeros([5,5])
-tmp = np.vstack(([[0,0,0],[0,0,0]],d2[0:3,0:3]))
-tmp = np.hstack(([[0,0],[0,0],[0,0],[0,0],[0,0]],tmp))
-s2=sum(sum(f2*tmp))
 
-answer = layer['biases']['w']['0'] + s0 + s1 + s2 
-answer
+import timeit
+timeit.timeit(convolve, number=100)/100
