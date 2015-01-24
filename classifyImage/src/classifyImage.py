@@ -61,14 +61,16 @@ inSizeY = 64
 
 # get the top left corner roi of 32x64 rectangle
 inData = np.empty([3,inSizeY,inSizeX])
-inData[0] = duckyRescaled[0:inSizeY,0:inSizeX,0]
-inData[1] = duckyRescaled[0:inSizeY,0:inSizeX,1]
-inData[2] = duckyRescaled[0:inSizeY,0:inSizeX,2]
+xOffset = 8
+yOffset = 12
+for i in range(3) :
+	inData[i] = duckyRescaled[yOffset:inSizeY+yOffset, xOffset:inSizeX+xOffset,i]
 
 
 with open('../model/chiquita.json') as json_data:
     model = json.load(json_data)
     json_data.close()
+
 
 layer = model['layers'][1]
 result, pooledResult = convolveKai(inData, inSizeX, inSizeY, layer)
@@ -89,6 +91,15 @@ swappedResult = swappedResult.flatten()
 
 layer = model['layers'][10]
 result = fcLayer(swappedResult, layer)
+
+#softmax
+softmax = np.exp(result-max(result))
+softmax_sum = sum(softmax)
+softmax = softmax/softmax_sum
+answer = np.argmax(softmax)
+print answer
+print softmax
+print result[answer]
 
 
 
