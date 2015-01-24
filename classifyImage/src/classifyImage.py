@@ -131,6 +131,21 @@ def test():
 #	print softmax
 #	print result[answer]
 
-import timeit
-print timeit.timeit(test, number=100)/100
+#import timeit
+#print timeit.timeit(test, number=100)/100
 
+maxAnswerValue = 0
+for yOffset in range(0,17,4):
+	for xOffset in range(0,15,4):
+		for i in range(3):
+			inData[i] = duckyRescaled[yOffset:inSizeY+yOffset, xOffset:inSizeX+xOffset,i]
+		answer, softmax, mag = test()
+		print xOffset, yOffset, answer, softmax[answer], mag
+		if softmax[answer] > maxAnswerValue:
+			maxAnswerValue = softmax[answer]
+			x_final = xOffset
+			y_final = yOffset
+			answer_final = answer
+			mag_final = mag
+
+print "final: ", answer_final, x_final, y_final, maxAnswerValue, mag_final
