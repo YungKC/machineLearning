@@ -4,9 +4,21 @@ from scipy import misc
 
 #TODO: need to move the layer initialization portion out of the convolveKai method
 
-from scipy.signal import convolve2d
+#from scipy.signal import convolve2d
+from scipy.ndimage.filters import convolve   # this is much faster than scipy.signal.convolve2d
 from skimage.measure import block_reduce
-def convolveKai(inData, inSizeX, inSizeY, layer):
+
+def initFCLayer(layer):
+	filter_depth = layer['out_depth']
+	in_size = layer['num_inputs']
+	wnp = np.zeros([filter_depth,in_size])
+	for filterID in range(filter_depth):
+		w=layer['filters'][filterID]['w']
+		for i in range(in_size):
+			wnp[filterID][i] = w[str(i)]
+	layer['wnp'] = wnp
+
+def initConvolveLayer(layer):
 	filter_sx = layer['sx']	#5
 	filter_sy = layer['sy']	#5
 	colorDepth = layer['in_depth']	#3
@@ -25,14 +37,23 @@ def convolveKai(inData, inSizeX, inSizeY, layer):
 		tmp = wnp[filterID].reshape([filter_sx,filter_sy,colorDepth])
 		for colorID in range(colorDepth):
 			f[filterID][colorID]=tmp[:,:,colorID]
-			f[filterID][colorID]=np.fliplr(np.flipud(f[filterID][colorID]))
+			f[filterID][colorID]=np.fliplr(np.flipud(f[filterID][colorID]))	
+	layer['f'] = f
+
+
+def convolveKai(inData, inSizeX, inSizeY, layer):
+	colorDepth = layer['in_depth']	#3
+	filter_depth = layer['out_depth']	#16
+
+	f = layer['f']
 
 	pooledResult = np.empty([filter_depth,inSizeY/2,inSizeX/2])
 	result = np.empty([filter_depth,inSizeY,inSizeX])
 	for filterID in range(filter_depth):
 		c = np.zeros([inSizeY, inSizeX])
 		for colorID in range(colorDepth):
-			c+=convolve2d(inData[colorID],f[filterID][colorID],mode='same',boundary='fill',fillvalue=0)
+#			c+=convolve2d(inData[colorID],f[filterID][colorID],mode='same',boundary='fill',fillvalue=0)
+			c+=convolve(inData[colorID],f[filterID][colorID],mode='constant',cval=0)
 		result[filterID] = c+layer['biases']['w'][str(filterID)]
 		# max pool here
 		pooledResult[filterID]  = block_reduce(result[filterID] , block_size=(2,2), func=np.max)
@@ -43,13 +64,8 @@ def convolveKai(inData, inSizeX, inSizeY, layer):
 def fcLayer(inData, layer):
 	filter_depth = layer['out_depth']
 	result = np.zeros([filter_depth])
-	in_size = layer['num_inputs']
-	wnp = np.zeros([filter_depth, in_size])
 	for filterID in range(filter_depth):
-	    w=layer['filters'][filterID]['w']
-	    for i in range(in_size):
-	        wnp[filterID][i] = w[str(i)]
-	    result[filterID] = sum(wnp[filterID] * inData) + layer['biases']['w'][str(filterID)]
+	    result[filterID] = sum(layer['wnp'][filterID] * inData) + layer['biases']['w'][str(filterID)]
 	return result
 
 ducky = misc.imread('../image/download.png')
@@ -73,35 +89,16 @@ with open('../model/chiquita.json') as json_data:
 
 
 layer = model['layers'][1]
-result, pooledResult = convolveKai(inData, inSizeX, inSizeY, layer)
+initConvolveLayer(layer)
 
 layer = model['layers'][4]
-result, pooledResult = convolveKai(pooledResult, inSizeX/2, inSizeY/2, layer)
+initConvolveLayer(layer)
 
 layer = model['layers'][7]
-result, pooledResult = convolveKai(pooledResult, inSizeX/4, inSizeY/4, layer)
-
-# display the result of the first image pixel
-pooledResult[np.ix_(np.arange(layer['out_depth']),[0],[0])].flatten()
-
-#switch axes in preparation of fully connected layer
-swappedResult = np.swapaxes(pooledResult,0,2)
-swappedResult = np.swapaxes(swappedResult,0,1)
-swappedResult = swappedResult.flatten()
+initConvolveLayer(layer)
 
 layer = model['layers'][10]
-result = fcLayer(swappedResult, layer)
-
-#softmax
-softmax = np.exp(result-max(result))
-softmax_sum = sum(softmax)
-softmax = softmax/softmax_sum
-answer = np.argmax(softmax)
-print answer
-print softmax
-print result[answer]
-
-
+initFCLayer(layer)
 
 def test():
 	layer = model['layers'][1]
@@ -113,7 +110,27 @@ def test():
 	layer = model['layers'][7]
 	result, pooledResult = convolveKai(pooledResult, inSizeX/4, inSizeY/4, layer)	
 
+	# display the result of the first image pixel
+	#pooledResult[np.ix_(np.arange(layer['out_depth']),[0],[0])].flatten()
 
-#import timeit
-#timeit.timeit(test, number=100)/100
+	#switch axes in preparation of fully connected layer
+	swappedResult = np.swapaxes(pooledResult,0,2)
+	swappedResult = np.swapaxes(swappedResult,0,1)
+	swappedResult = swappedResult.flatten()
+
+	layer = model['layers'][10]
+	result = fcLayer(swappedResult, layer)
+
+	#softmax
+	softmax = np.exp(result-max(result))
+	softmax_sum = sum(softmax)
+	softmax = softmax/softmax_sum
+	answer = np.argmax(softmax)
+	return answer, softmax, result[answer]
+#	print answer
+#	print softmax
+#	print result[answer]
+
+import timeit
+print timeit.timeit(test, number=100)/100
 
