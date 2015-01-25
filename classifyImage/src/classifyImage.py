@@ -71,7 +71,7 @@ classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash', 'notFound']
 import Tkinter, tkFileDialog
 root = Tkinter.Tk()
 root.withdraw()
-file_path = tkFileDialog.askopenfilename()
+file_path = tkFileDialog.askopenfilename(title="Open File", initialdir=('~/study/machineLearning/convnetjs_release/demo/chiquita'))
 
 ducky = misc.imread(file_path)
 if ducky.shape[0] > 80:
