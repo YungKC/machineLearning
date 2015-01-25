@@ -2,8 +2,6 @@ import numpy as np
 import json
 from scipy import misc
 
-#TODO: need to move the layer initialization portion out of the convolveKai method
-
 #from scipy.signal import convolve2d
 from scipy.ndimage.filters import convolve   # this is much faster than scipy.signal.convolve2d
 from skimage.measure import block_reduce
@@ -68,19 +66,28 @@ def fcLayer(inData, layer):
 	    result[filterID] = sum(layer['wnp'][filterID] * inData) + layer['biases']['w'][str(filterID)]
 	return result
 
-ducky = misc.imread('../image/download.png')
+classes_txt = ['ducky', 'hawaii', 'kid', 'maid', 'santa', 'stash', 'notFound']
+
+import Tkinter, tkFileDialog
+root = Tkinter.Tk()
+root.withdraw()
+file_path = tkFileDialog.askopenfilename()
+
+ducky = misc.imread(file_path)
+if ducky.shape[0] > 80:
+	ducky = misc.imresize(ducky, 80.0/ducky.shape[0])
+
+# need to rescale to max height of 80 pixels
+
+import matplotlib.pyplot as plt 
+plt.imshow(ducky)
+plt.show(block=False)
+
 duckyRescaled = ducky /255.0 - 0.5
 duckyRescaled = duckyRescaled[:,:,0:3]
 
 inSizeX = 32
 inSizeY = 64
-
-# get the top left corner roi of 32x64 rectangle
-inData = np.empty([3,inSizeY,inSizeX])
-xOffset = 8
-yOffset = 12
-for i in range(3) :
-	inData[i] = duckyRescaled[yOffset:inSizeY+yOffset, xOffset:inSizeX+xOffset,i]
 
 
 with open('../model/chiquita.json') as json_data:
@@ -134,18 +141,29 @@ def test():
 #import timeit
 #print timeit.timeit(test, number=100)/100
 
+inData = np.empty([3,inSizeY,inSizeX])
 maxAnswerValue = 0
-for yOffset in range(0,17,4):
-	for xOffset in range(0,15,4):
+answer_final = None
+maxYRange = duckyRescaled.shape[0]-1-64
+maxXRange = duckyRescaled.shape[1]-1-32
+for yOffset in range(2,maxYRange,2):
+	for xOffset in range(2,maxXRange,2):
 		for i in range(3):
 			inData[i] = duckyRescaled[yOffset:inSizeY+yOffset, xOffset:inSizeX+xOffset,i]
 		answer, softmax, mag = test()
 		print xOffset, yOffset, answer, softmax[answer], mag
-		if softmax[answer] > maxAnswerValue:
+		if answer != len(classes_txt)-1 and softmax[answer] > maxAnswerValue:
 			maxAnswerValue = softmax[answer]
 			x_final = xOffset
 			y_final = yOffset
 			answer_final = answer
 			mag_final = mag
 
-print "final: ", answer_final, x_final, y_final, maxAnswerValue, mag_final
+if answer_final != None:
+	print "final: ", classes_txt[answer_final], x_final, y_final, maxAnswerValue, mag_final
+	plt.gca()
+	plt.gca().add_patch(plt.Rectangle((x_final,y_final),32,64, fill=None))
+	plt.show(block=False)
+else:
+	print "Did not match any targets."
+raw_input("Press Enter to continue...")
